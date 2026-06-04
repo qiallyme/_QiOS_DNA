@@ -1,0 +1,1993 @@
+CODE EXTRACTION - 2025-11-03 14:30:34
+Script: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\code_extractor.py
+Root: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode
+Output Directory: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\code_extraction_2025-11-03_14-30-34
+Output split into chunks of 2000 lines max
+================================================================================
+
+
+DIRECTORY TREE:
+----------------------------------------
+
+├── 1.21_Title_Foundations
+
+│   ├── 1.21.00_Title_Index.md
+
+│   ├── 1.21.1_Principle_of_Awareness.md
+
+│   ├── 1.21.2_Principle_of_Presence.md
+
+│   ├── 1.21.3_Principle_of_Target_Market.md
+
+│   ├── 1.21.4_Principle_of_Services.md
+
+│   ├── 1.21.5_Principle_of_Business_Model.md
+
+│   ├── 1.21.6_Principle_of_Business_Goals.md
+
+│   ├── 1.21.7_Principle_of_Organizational_Structure.md
+
+│   └── _1.21_Title_Foundations.md
+
+├── 1.22_Title_Self_and_Inner_Work
+
+│   ├── 1.22.00_Title_Index.md
+
+│   └── _1.22_Title_Self_and_Inner_Work.md
+
+├── 1.23_Title_Work_and_Creation
+
+│   ├── 1.23.00_Title_Index.md
+
+│   └── _1.23_Title_Work_and_Creation.md
+
+├── 1.24_Title_Relations_and_Exchange
+
+│   ├── 1.24.00_Title_Index.md
+
+│   ├── 1.24.1_Principle_of_Social_Media_Guidelines.md
+
+│   └── _1.24_Title_Relations_and_Exchange.md
+
+├── 1.25_Title_Action_and_Automation
+
+│   ├── 1.25.00_Title_Index.md
+
+│   └── _1.25_Title_Action_and_Automation.md
+
+├── 1.26_Title_Identity_and_Integrity
+
+│   ├── 1.26.00_Title_Index.md
+
+│   └── _1.26_Title_Identity_and_Integrity.md
+
+├── 1.27_Title_Mind_and_Will
+
+│   ├── 1.27.00_Title_Index.md
+
+│   └── _1.27_Title_Mind_and_Will.md
+
+├── 1.28_Title_Cycles_and_Closure
+
+│   ├── 1.28.00_Title_Index.md
+
+│   └── _1.28_Title_Cycles_and_Closure.md
+
+├── 1.29_Title_Ethics_and_Evolution
+
+│   ├── 1.29.00_Title_Index.md
+
+│   └── _1.29_Title_Ethics_and_Evolution.md
+
+├── 1.30_Title_Legacy_and_Design
+
+│   ├── 1.30.00_Title_Index.md
+
+│   └── _1.30_Title_Legacy_and_Design.md
+
+├── 1.20.00_QiCode_Index.md
+
+├── _1.20_QiCode.md
+
+├── _TEMPLATE_Principle.md
+
+├── index.md
+
+├── List_Pending_Code_Creations.md
+
+├── mkdocs.yml
+
+├── MKDOCS_SETUP.md
+
+├── README.md
+
+└── requirements.txt
+
+
+================================================================================
+EXTRACTING FILE CONTENTS
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.20.00_QiCode_Index.md
+================================================================================
+
+
+---
+title: QiCode — Personal Legal Code
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.20
+parent: 1_QiEos
+---
+
+# 🜂 QiCode — Personal Legal Code
+_The statutes by which I live and work._
+
+---
+
+## Purpose
+
+QiCode defines the **law** — the immutable principles, statutes, and rules that govern how I operate within the QiOne ecosystem and beyond. Where QiEOS provides structure and QiKBs provide practice, QiCode provides **authority** and **commitment**.
+
+---
+
+## Structure
+
+QiCode is organized into **10 Titles**, each addressing a fundamental domain of life and work:
+
+| Title | Domain | Description |
+|-------|--------|-------------|
+| [Title I — Foundations](1.21_Title_Foundations/) | Core principles | Fundamental awareness, presence, and structure |
+| [Title II — Self & Inner Work](1.22_Title_Self_and_Inner_Work/) | Personal development | Awareness, habits, emotional systems |
+| [Title III — Work & Creation](1.23_Title_Work_and_Creation/) | Productivity | Flow, manifestation, and creative output |
+| [Title IV — Relations & Exchange](1.24_Title_Relations_and_Exchange/) | Interpersonal | Boundaries, reciprocity, and connection |
+| [Title V — Action & Automation](1.25_Title_Action_and_Automation/) | Execution | Energy management, movement, and systems |
+| [Title VI — Identity & Integrity](1.26_Title_Identity_and_Integrity/) | Authenticity | Naming, alignment, and truth |
+| [Title VII — Mind & Will](1.27_Title_Mind_and_Will/) | Decision-making | Thought hygiene and choice |
+| [Title VIII — Cycles & Closure](1.28_Title_Cycles_and_Closure/) | Transitions | Endings, forgiveness, and renewal |
+| [Title IX — Ethics & Evolution](1.29_Title_Ethics_and_Evolution/) | Moral systems | Feedback, growth, and alignment |
+| [Title X — Legacy & Design](1.30_Title_Legacy_and_Design/) | Purpose | Continuity, vision, and impact |
+
+---
+
+## Principles as Law
+
+Each Principle within a Title is a **statute** — a binding rule that shapes behavior, decision-making, and system design. Principles are:
+
+- **Immutable by default** — Changes require formal amendment
+- **Actionable** — They must guide real behavior
+- **Interlinked** — Connected to workflows, SOPs, and practices
+- **Traceable** — Referenced in QiKBs and client work
+
+---
+
+## Amendment Process
+
+1. **Propose** a new Principle or amendment in the relevant Title directory
+2. **Review** against existing Principles for conflicts
+3. **Ratify** by updating the Title index and logging in `1.50_Meta/QiCodex.csv`
+4. **Archive** superseded Principles in `1.90_ARCH/`
+
+---
+
+## QiDecimal ID Format
+
+Each Principle follows the format: `1.XX.Y` where:
+- `1.XX` = Title number (1.21 through 1.30)
+- `Y` = Principle number within that Title
+
+Example: `1.21.1` = Title I, §1 "Principle of Awareness"
+
+---
+
+## Current Principles
+
+| Title | Principle ID | Principle Name | Status |
+|-------|--------------|----------------|--------|
+| Title I | 1.21.1 | [§1 Principle of Awareness](1.21_Title_Foundations/1.21.1_Principle_of_Awareness.md) | active |
+| Title I | 1.21.2 | [§2 Principle of Presence](1.21_Title_Foundations/1.21.2_Principle_of_Presence.md) | active |
+
+_Total: 2 Principles enacted across 1 Title_
+
+---
+
+## Registry
+
+All QiCode entries are registered in the [QiCodex Registry](../../1.50_Meta/QiCodex.csv), which serves as the machine-readable index for all QiDecimal IDs in the QiOne ecosystem.
+
+---
+
+**QiCode v1.0 — Enacted 2025-11-02**  
+_Stewarded by C. Rice-Velasquez_
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.20.00_QiCode_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\_1.20_QiCode.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\_1.20_QiCode.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\_TEMPLATE_Principle.md
+================================================================================
+
+
+---
+title: §X Principle of [Name]
+type: governance
+author: C. Rice-Velasquez
+created: YYYY-MM-DD
+last_updated: YYYY-MM-DD
+status: active
+qi_decimal: 1.XX.Y
+parent: 1.XX_Title_[Name]
+---
+
+# §X Principle of [Name]
+_Brief descriptive subtitle._
+
+---
+
+## Statute
+
+**The core law or rule in bold statement form.**
+
+Detailed explanation of what this principle requires, with numbered commitments:
+
+1. **First commitment** — Description
+2. **Second commitment** — Description
+3. **Third commitment** — Description
+4. **Additional commitments** — As needed
+
+---
+
+## Application
+
+This principle applies to:
+- Domain 1 where it is relevant
+- Domain 2 where it is relevant
+- Specific situations or contexts
+- Related areas of life or work
+
+---
+
+## Exceptions
+
+List any exceptions, conditions, or edge cases where this principle may not apply, or specify "None" if it is absolute.
+
+---
+
+## Related Principles
+
+- [Related Principle Name](1.XX.Y_Principle_of_[Name].md) — Brief relationship description
+
+---
+
+**Enacted: YYYY-MM-DD**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\_TEMPLATE_Principle.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\index.md
+================================================================================
+
+
+---
+title: QiCode — Personal Legal Code
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.20
+parent: 1_QiEos
+---
+
+# 🜂 QiCode — Personal Legal Code
+_The statutes by which I live and work._
+
+---
+
+## Purpose
+
+QiCode defines the **law** — the immutable principles, statutes, and rules that govern how I operate within the QiOne ecosystem and beyond. Where QiEOS provides structure and QiKBs provide practice, QiCode provides **authority** and **commitment**.
+
+---
+
+## Structure
+
+QiCode is organized into **10 Titles**, each addressing a fundamental domain of life and work:
+
+| Title | Domain | Description |
+|-------|--------|-------------|
+| [Title I — Foundations](1.21_Title_Foundations/1.21.00_Title_Index.md) | Core principles | Fundamental awareness, presence, and structure |
+| [Title II — Self & Inner Work](1.22_Title_Self_and_Inner_Work/1.22.00_Title_Index.md) | Personal development | Awareness, habits, emotional systems |
+| [Title III — Work & Creation](1.23_Title_Work_and_Creation/1.23.00_Title_Index.md) | Productivity | Flow, manifestation, and creative output |
+| [Title IV — Relations & Exchange](1.24_Title_Relations_and_Exchange/1.24.00_Title_Index.md) | Interpersonal | Boundaries, reciprocity, and connection |
+| [Title V — Action & Automation](1.25_Title_Action_and_Automation/1.25.00_Title_Index.md) | Execution | Energy management, movement, and systems |
+| [Title VI — Identity & Integrity](1.26_Title_Identity_and_Integrity/1.26.00_Title_Index.md) | Authenticity | Naming, alignment, and truth |
+| [Title VII — Mind & Will](1.27_Title_Mind_and_Will/1.27.00_Title_Index.md) | Decision-making | Thought hygiene and choice |
+| [Title VIII — Cycles & Closure](1.28_Title_Cycles_and_Closure/1.28.00_Title_Index.md) | Transitions | Endings, forgiveness, and renewal |
+| [Title IX — Ethics & Evolution](1.29_Title_Ethics_and_Evolution/1.29.00_Title_Index.md) | Moral systems | Feedback, growth, and alignment |
+| [Title X — Legacy & Design](1.30_Title_Legacy_and_Design/1.30.00_Title_Index.md) | Purpose | Continuity, vision, and impact |
+
+---
+
+## Principles as Law
+
+Each Principle within a Title is a **statute** — a binding rule that shapes behavior, decision-making, and system design. Principles are:
+
+- **Immutable by default** — Changes require formal amendment
+- **Actionable** — They must guide real behavior
+- **Interlinked** — Connected to workflows, SOPs, and practices
+- **Traceable** — Referenced in QiKBs and client work
+
+---
+
+## Amendment Process
+
+1. **Propose** a new Principle or amendment in the relevant Title directory
+2. **Review** against existing Principles for conflicts
+3. **Ratify** by updating the Title index and logging in `1.50_Meta/QiCodex.csv`
+4. **Archive** superseded Principles in `1.90_ARCH/`
+
+---
+
+## QiDecimal ID Format
+
+Each Principle follows the format: `1.XX.Y` where:
+- `1.XX` = Title number (1.21 through 1.30)
+- `Y` = Principle number within that Title
+
+Example: `1.21.1` = Title I, §1 "Principle of Awareness"
+
+---
+
+## Current Principles
+
+| Title | Principle ID | Principle Name | Status |
+|-------|--------------|----------------|--------|
+| Title I | 1.21.1 | [§1 Principle of Awareness](1.21_Title_Foundations/1.21.1_Principle_of_Awareness.md) | active |
+| Title I | 1.21.2 | [§2 Principle of Presence](1.21_Title_Foundations/1.21.2_Principle_of_Presence.md) | active |
+
+_Total: 2 Principles enacted across 1 Title_
+
+---
+
+## Registry
+
+All QiCode entries are registered in the [QiCodex Registry](../../1.50_Meta/QiCodex.csv), which serves as the machine-readable index for all QiDecimal IDs in the QiOne ecosystem.
+
+---
+
+**QiCode v1.0 — Enacted 2025-11-02**  
+_Stewarded by C. Rice-Velasquez_
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\List_Pending_Code_Creations.md
+================================================================================
+
+
+Client Interaction Protocols
+Security Guidelines
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\List_Pending_Code_Creations.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\mkdocs.yml
+================================================================================
+
+
+site_name: QiCode — Personal Legal Code
+site_description: The statutes by which I live and work
+site_author: C. Rice-Velasquez
+site_url: https://qicode.qially.me
+
+# Repository
+repo_name: QiCode
+repo_url: https://github.com/yourusername/QiOne
+edit_uri: edit/main/1_QiEos/1.20_QiCode/
+
+# Copyright
+copyright: Copyright &copy; 2025 C. Rice-Velasquez
+
+# Configuration
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
+    - content.tooltips
+  icon:
+    repo: fontawesome/brands/github
+
+# Extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+      baselevel: 2
+
+# Plugins
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Title I — Foundations:
+    - Title I Overview: 1.21_Title_Foundations/1.21.00_Title_Index.md
+    - §1 Principle of Awareness: 1.21_Title_Foundations/1.21.1_Principle_of_Awareness.md
+    - §2 Principle of Presence: 1.21_Title_Foundations/1.21.2_Principle_of_Presence.md
+  - Title II — Self & Inner Work:
+    - Title II Overview: 1.22_Title_Self_and_Inner_Work/1.22.00_Title_Index.md
+  - Title III — Work & Creation:
+    - Title III Overview: 1.23_Title_Work_and_Creation/1.23.00_Title_Index.md
+  - Title IV — Relations & Exchange:
+    - Title IV Overview: 1.24_Title_Relations_and_Exchange/1.24.00_Title_Index.md
+  - Title V — Action & Automation:
+    - Title V Overview: 1.25_Title_Action_and_Automation/1.25.00_Title_Index.md
+  - Title VI — Identity & Integrity:
+    - Title VI Overview: 1.26_Title_Identity_and_Integrity/1.26.00_Title_Index.md
+  - Title VII — Mind & Will:
+    - Title VII Overview: 1.27_Title_Mind_and_Will/1.27.00_Title_Index.md
+  - Title VIII — Cycles & Closure:
+    - Title VIII Overview: 1.28_Title_Cycles_and_Closure/1.28.00_Title_Index.md
+  - Title IX — Ethics & Evolution:
+    - Title IX Overview: 1.29_Title_Ethics_and_Evolution/1.29.00_Title_Index.md
+  - Title X — Legacy & Design:
+    - Title X Overview: 1.30_Title_Legacy_and_Design/1.30.00_Title_Index.md
+
+# Docs directory (use current directory)
+docs_dir: .
+
+# Exclude patterns (files/folders to ignore)
+exclude_docs: |
+  README.md
+  MKDOCS_SETUP.md
+  _TEMPLATE_Principle.md
+  requirements.txt
+  mkdocs.yml
+  venv/
+  site/
+  .git/
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\mkdocs.yml
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\MKDOCS_SETUP.md
+================================================================================
+
+
+# MkDocs Setup Guide for QiCode
+
+This directory now includes MkDocs configuration to generate a wiki-style documentation site similar to the Indiana Code website.
+
+## Quick Start
+
+### 1. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Or if using a virtual environment (recommended):
+
+```bash
+python -m venv venv
+venv\Scripts\activate  # On Windows
+pip install -r requirements.txt
+```
+
+### 2. Preview the Site
+
+Start the development server:
+
+```bash
+mkdocs serve
+```
+
+The site will be available at `http://127.0.0.1:8000`
+
+### 3. Build the Site
+
+Generate static HTML files:
+
+```bash
+mkdocs build
+```
+
+The output will be in the `site/` directory (which is gitignored).
+
+## Configuration
+
+The `mkdocs.yml` file contains:
+
+- **Material Theme**: Modern, wiki-like appearance with light/dark mode
+- **Navigation Structure**: Organized by Titles with expandable sections
+- **Search**: Full-text search enabled
+- **Extensions**: Various Markdown extensions for tables, code blocks, etc.
+
+## Site Structure
+
+- **Homepage**: `index.md` (serves as the main landing page)
+- **Navigation**: Configured in `mkdocs.yml` nav section
+- **Source Files**: All markdown files in the current directory (except excluded files)
+
+## Customization
+
+### Update Navigation
+
+When adding new Principles, update the `nav:` section in `mkdocs.yml`:
+
+```yaml
+nav:
+  - Title I — Foundations:
+    - Title I Overview: 1.21_Title_Foundations/1.21.00_Title_Index.md
+    - §1 Principle of Awareness: 1.21_Title_Foundations/1.21.1_Principle_of_Awareness.md
+    - §2 Principle of Presence: 1.21_Title_Foundations/1.21.2_Principle_of_Presence.md
+    - §3 New Principle: 1.21_Title_Foundations/1.21.3_New_Principle.md  # Add new entries here
+```
+
+### Change Theme Colors
+
+Edit the `palette:` section in `mkdocs.yml`:
+
+```yaml
+theme:
+  palette:
+    - scheme: default
+      primary: indigo  # Change to blue, green, red, etc.
+```
+
+### Deploy
+
+#### GitHub Pages
+
+1. Push the repository to GitHub
+2. Enable GitHub Pages in repository settings
+3. Run `mkdocs gh-deploy` (requires `mkdocs-git-revision-date-plugin` if adding dates)
+
+#### Other Hosting
+
+Upload the contents of the `site/` directory to any static hosting service:
+- Netlify
+- Vercel
+- AWS S3 + CloudFront
+- Any web server
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 8000 is busy:
+
+```bash
+mkdocs serve -a 127.0.0.1:8080
+```
+
+### Missing Dependencies
+
+If you see import errors:
+
+```bash
+pip install --upgrade -r requirements.txt
+```
+
+### Navigation Not Updating
+
+After adding new files, ensure they're:
+1. Added to the `nav:` section in `mkdocs.yml`
+2. Not in the `exclude_docs:` list
+3. Saved with `.md` extension
+
+## Features
+
+- ✅ Material Design theme (wiki-like appearance)
+- ✅ Light/Dark mode toggle
+- ✅ Full-text search
+- ✅ Mobile-responsive
+- ✅ Table of contents on each page
+- ✅ Navigation tabs and sections
+- ✅ Code syntax highlighting
+- ✅ Table support
+- ✅ Footnotes support
+
+## Next Steps
+
+1. Run `mkdocs serve` to preview
+2. Customize colors/theme in `mkdocs.yml` if desired
+3. Add any missing navigation entries
+4. Deploy to your preferred hosting service
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\MKDOCS_SETUP.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\README.md
+================================================================================
+
+
+# QiCode — Personal Legal Code
+
+QiCode is your **personal legal code** — the immutable principles and statutes by which you live and work.
+
+## Quick Start
+
+1. **Browse Titles** — Review the 10 Title directories to see the domain structure
+2. **Read Principles** — Each Principle is a binding statute with specific applications
+3. **Add New Principles** — Use `_TEMPLATE_Principle.md` as a starting point
+4. **Update Title Indexes** — Always update the Title index when adding Principles
+
+## Structure
+
+```
+1.20_QiCode/
+├── 1.20.00_QiCode_Index.md          # Master overview
+├── _TEMPLATE_Principle.md            # Template for new Principles
+├── 1.21_Title_Foundations/           # Title I
+│   ├── 1.21.00_Title_Index.md
+│   ├── 1.21.1_Principle_of_Awareness.md
+│   └── 1.21.2_Principle_of_Presence.md
+├── 1.22_Title_Self_and_Inner_Work/  # Title II
+│   └── 1.22.00_Title_Index.md
+├── 1.23_Title_Work_and_Creation/     # Title III
+│   └── 1.23.00_Title_Index.md
+├── [8 more Titles...]
+└── 1.30_Title_Legacy_and_Design/     # Title X
+    └── 1.30.00_Title_Index.md
+```
+
+## Adding a New Principle
+
+1. Copy `_TEMPLATE_Principle.md` to the appropriate Title directory
+2. Name it: `1.XX.Y_Principle_of_[Name].md` (increment Y from existing Principles)
+3. Fill in the template with:
+   - **Statute**: The core law in bold statement form
+   - **Application**: Where and when it applies
+   - **Exceptions**: Any edge cases (or "None")
+   - **Related Principles**: Cross-references to other Principles
+4. Update the Title's index file (`1.XX.00_Title_Index.md`) to include the new Principle
+5. Update `1.50_Meta/QiCodex.csv` with the new QiDecimal ID
+
+## Principle Format
+
+Each Principle follows this structure:
+- **YAML Front Matter** with metadata (qi_decimal, parent, etc.)
+- **Statute** section — the core law
+- **Application** section — where it applies
+- **Exceptions** section — edge cases
+- **Related Principles** section — cross-references
+
+## QiDecimal IDs
+
+- `1.XX` = Title number (21-30)
+- `1.XX.Y` = Principle number within Title
+- Always increment sequentially — no gaps or reuse
+
+## Amendment Process
+
+Principles are **immutable by default**. To change:
+1. Create new version or amendment proposal
+2. Review for conflicts with existing Principles
+3. Ratify by updating indexes and QiCodex
+4. Archive superseded versions in `1.90_ARCH/`
+
+## Next Steps
+
+- Review Title I (Foundations) to see example Principles
+- Draft Principles for Titles relevant to current needs
+- Reference QiCode in workflows and SOPs as "governing law"
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\README.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\requirements.txt
+================================================================================
+
+
+mkdocs>=1.5.0
+mkdocs-material>=9.4.0
+pymdown-extensions>=10.0.0
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\requirements.txt
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title I — Foundations
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.21
+parent: 1.20_QiCode
+---
+
+# Title I — Foundations
+_Core principles and structural integrity._
+
+---
+
+## Scope
+
+Title I establishes the foundational principles that underpin all other Titles. These are the **immutable laws** of awareness, presence, and fundamental structure that must be honored before any other principle can be effectively applied.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| [1.21.1](1.21.1_Principle_of_Awareness.md) | Principle of Awareness | active |
+| [1.21.2](1.21.2_Principle_of_Presence.md) | Principle of Presence | active |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title I — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.1_Principle_of_Awareness.md
+================================================================================
+
+
+---
+title: §1 Principle of Awareness
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.21.1
+parent: 1.21_Title_Foundations
+---
+
+# §1 Principle of Awareness
+_The law of observation and reflection._
+
+---
+
+## Statute
+
+**I must observe before I act.** 
+
+Before making decisions, taking action, or forming judgments, I commit to:
+1. **Observe** the full context without immediate reaction
+2. **Reflect** on patterns, implications, and connections
+3. **Document** observations when they inform future decisions
+4. **Question** assumptions and first impressions
+
+---
+
+## Application
+
+This principle applies to:
+- Personal decisions and life choices
+- Work priorities and project planning
+- Relationships and interpersonal dynamics
+- System design and automation
+- Learning and knowledge integration
+
+---
+
+## Exceptions
+
+None. Awareness is non-negotiable as the foundation of all other principles.
+
+---
+
+## Related Principles
+
+- [§2 Principle of Presence](1.21.2_Principle_of_Presence.md)
+
+---
+
+**Enacted: 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.1_Principle_of_Awareness.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.2_Principle_of_Presence.md
+================================================================================
+
+
+---
+title: §2 Principle of Presence
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.21.2
+parent: 1.21_Title_Foundations
+---
+
+# §2 Principle of Presence
+_The law of now and embodiment._
+
+---
+
+## Statute
+
+**I must be fully present to the moment and the work.**
+
+I commit to:
+1. **Focus** on the task, person, or moment at hand
+2. **Eliminate** distractions that pull attention away
+3. **Embody** my values through action, not just intention
+4. **Anchor** decisions in present reality, not hypothetical futures
+
+---
+
+## Application
+
+This principle applies to:
+- Work sessions and deep focus time
+- Conversations and relationships
+- Creative and technical work
+- System maintenance and refinement
+- Self-care and personal rituals
+
+---
+
+## Exceptions
+
+Strategic planning and future vision are exempted, but must be done with intentional presence during the planning session itself.
+
+---
+
+## Related Principles
+
+- [§1 Principle of Awareness](1.21.1_Principle_of_Awareness.md)
+
+---
+
+**Enacted: 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.2_Principle_of_Presence.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.3_Principle_of_Target_Market.md
+================================================================================
+
+
+---
+title: §3 Principle of Target Market
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-03
+last_updated: 2025-11-03
+status: active
+qi_decimal: 1.21.3
+parent: 1.21_Title_Foundations
+---
+
+# §3 Principle of Target Market
+_Focus on those who most need accessible, trustworthy support._
+
+---
+
+## Statute
+
+**I serve small businesses, solopreneurs, immigrants, and multilingual families seeking low-cost, trustworthy help with taxes, tech, forms, and growth.**
+
+This principle defines who I commit to serving and why. I commit to:
+
+1. **Prioritize accessibility** — Make services affordable and approachable for those with limited resources
+2. **Build trust** — Establish credibility through transparency, trauma-informed practices, and consistent delivery
+3. **Serve underserved communities** — Focus on immigrants, multilingual families, and small businesses who need support the most
+4. **Remove barriers** — Address taxes, tech, forms, and growth challenges that create friction for these communities
+5. **Cultural competence** — Provide bilingual, culturally-aware support that respects diverse backgrounds
+
+---
+
+## Application
+
+This principle applies to:
+- Business development and marketing decisions
+- Service pricing and packaging
+- Client selection and focus
+- Content creation and messaging
+- Partnership and referral strategies
+- Product development priorities
+
+---
+
+## Exceptions
+
+None. This target market focus is foundational to the mission.
+
+---
+
+## Related Principles
+
+- [§4 Principle of Services](1.21.4_Principle_of_Services.md) — Services designed for this market
+- [§5 Principle of Business Model](1.21.5_Principle_of_Business_Model.md) — Pricing aligned with accessibility
+
+---
+
+**Enacted: 2025-11-03**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.3_Principle_of_Target_Market.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.4_Principle_of_Services.md
+================================================================================
+
+
+---
+title: §4 Principle of Services
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-03
+last_updated: 2025-11-03
+status: active
+qi_decimal: 1.21.4
+parent: 1.21_Title_Foundations
+---
+
+# §4 Principle of Services
+_Comprehensive support across financial, digital, HR, legal, and access domains._
+
+---
+
+## Statute
+
+**I provide integrated services across five core domains with ADHD- and immigrant-friendly UX, backed by lean operations and transparent practices.**
+
+Service delivery commitments:
+
+1. **Financial Services** — Tax prep, bookkeeping, accounting
+2. **Digital Services** — IT support, automation, AI tools
+3. **HR Services** — Payroll, compliance, onboarding
+4. **Legal Services** — Business filings, ITINs, contracts
+5. **Access Services** — Translations, immigration forms, local support
+
+**Service delivery standards:**
+
+1. **Lean & automated operations** — Efficiency through automation and streamlined processes
+2. **ADHD-friendly UX** — Clear, simple interfaces that reduce cognitive load
+3. **Immigrant-friendly approach** — Bilingual support, cultural awareness, and accessible navigation
+4. **Ecosystem integration** — Backed by QIP/QHR/INF ecosystem for comprehensive support
+5. **Transparency** — Clear pricing, processes, and expectations
+6. **Trauma-informed practices** — Sensitive to client experiences and backgrounds
+7. **Bilingual capability** — Support in multiple languages when needed
+
+---
+
+## Application
+
+This principle applies to:
+- Service design and development
+- Client onboarding and support processes
+- Partner and affiliate relationships
+- Quality standards and delivery methods
+- Pricing and packaging decisions
+
+---
+
+## Exceptions
+
+Service availability may vary based on regulatory requirements, partner capabilities, or geographic limitations.
+
+---
+
+## Related Principles
+
+- [§3 Principle of Target Market](1.21.3_Principle_of_Target_Market.md) — Services aligned with market needs
+- [§5 Principle of Business Model](1.21.5_Principle_of_Business_Model.md) — Service packaging and pricing
+
+---
+
+**Enacted: 2025-11-03**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.4_Principle_of_Services.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.5_Principle_of_Business_Model.md
+================================================================================
+
+
+---
+title: §5 Principle of Business Model
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-03
+last_updated: 2025-11-03
+status: active
+qi_decimal: 1.21.5
+parent: 1.21_Title_Foundations
+---
+
+# §5 Principle of Business Model
+_Affordable memberships with flexible à la carte options, delivered async-first._
+
+---
+
+## Statute
+
+**I operate on a membership model ($9.99/mo) with bundled solutions and à la carte services, delivered async-first, flat-rate, and mobile-friendly.**
+
+Business model commitments:
+
+1. **Accessible pricing** — Base membership at $9.99/month for core access
+2. **Bundled solutions** — QiAlly 360° bundled offerings for comprehensive support
+3. **À la carte services** — Flexible options for specific needs beyond membership
+4. **Async-first delivery** — Prioritize asynchronous communication and service delivery
+5. **Flat-rate transparency** — Clear, predictable pricing without hidden fees
+6. **Mobile-friendly** — Services accessible and usable on mobile devices
+7. **Multiple channels** — Available through website, referrals, and direct outreach
+
+---
+
+## Application
+
+This principle applies to:
+- Pricing strategy and structure
+- Service packaging and bundling
+- Communication and delivery methods
+- Channel strategy and distribution
+- Client acquisition approaches
+
+---
+
+## Exceptions
+
+Custom enterprise solutions may require different pricing structures and delivery methods.
+
+---
+
+## Related Principles
+
+- [§3 Principle of Target Market](1.21.3_Principle_of_Target_Market.md) — Model designed for accessibility
+- [§4 Principle of Services](1.21.4_Principle_of_Services.md) — Services delivered through this model
+- [§6 Principle of Business Goals](1.21.6_Principle_of_Business_Goals.md) — Goals aligned with model sustainability
+
+---
+
+**Enacted: 2025-11-03**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.5_Principle_of_Business_Model.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.6_Principle_of_Business_Goals.md
+================================================================================
+
+
+---
+title: §6 Principle of Business Goals
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-03
+last_updated: 2025-11-03
+status: active
+qi_decimal: 1.21.6
+parent: 1.21_Title_Foundations
+---
+
+# §6 Principle of Business Goals
+_Measurable commitments to client success and sustainable operations._
+
+---
+
+## Statute
+
+**I commit to achieving and maintaining specific goals that ensure client success and business sustainability.**
+
+Goal commitments:
+
+1. **80%+ membership renewals** — Maintain high retention through value delivery
+2. **4.8+ satisfaction rating** — Deliver exceptional client experiences consistently
+3. **$10K+/mo sustainable revenue** — Achieve financial sustainability for long-term operation
+4. **Clear audit wins** — Demonstrate measurable value through successful outcomes
+5. **Growth outcomes** — Enable measurable client growth and success
+
+These goals are measured quarterly and reviewed annually.
+
+---
+
+## Application
+
+This principle applies to:
+- Service delivery quality standards
+- Client relationship management
+- Business planning and strategy
+- Performance measurement and accountability
+- Resource allocation decisions
+
+---
+
+## Exceptions
+
+Goals may be adjusted during market shifts, major business model changes, or external factors beyond control, with documented rationale.
+
+---
+
+## Related Principles
+
+- [§5 Principle of Business Model](1.21.5_Principle_of_Business_Model.md) — Goals aligned with model success
+- [§7 Principle of Organizational Structure](1.21.7_Principle_of_Organizational_Structure.md) — Structure designed to achieve goals
+
+---
+
+**Enacted: 2025-11-03**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.6_Principle_of_Business_Goals.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.7_Principle_of_Organizational_Structure.md
+================================================================================
+
+
+---
+title: §7 Principle of Organizational Structure
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-03
+last_updated: 2025-11-03
+status: active
+qi_decimal: 1.21.7
+parent: 1.21_Title_Foundations
+---
+
+# §7 Principle of Organizational Structure
+_Entity structure, domain, and affiliates under the hummingbird symbol._
+
+---
+
+## Statute
+
+**I operate as Innovaflow Solutions LLC dba QiAlly, with defined domain, affiliates, and symbolic identity.**
+
+Organizational commitments:
+
+1. **Legal entity** — Innovaflow Solutions LLC doing business as QiAlly
+2. **Primary domain** — [qially.me](https://qially.me/) as the main digital presence
+3. **Affiliate ecosystem** — QIP, QHR LLP as affiliated entities providing integrated support
+4. **Symbolic identity** — Hummingbird (walela) representing energy, speed, and precision
+5. **Cohesive branding** — All entities operate under aligned mission and values
+
+---
+
+## Application
+
+This principle applies to:
+- Legal structure and compliance
+- Branding and identity decisions
+- Domain and digital presence
+- Affiliate relationships and integration
+- Entity registration and filings
+
+---
+
+## Exceptions
+
+Affiliate relationships may evolve, but core entity structure remains stable.
+
+---
+
+## Related Principles
+
+- [§4 Principle of Services](1.21.4_Principle_of_Services.md) — Services delivered through this structure
+- [§6 Principle of Business Goals](1.21.6_Principle_of_Business_Goals.md) — Goals measured within this structure
+
+---
+
+**Enacted: 2025-11-03**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\1.21.7_Principle_of_Organizational_Structure.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\_1.21_Title_Foundations.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.21_Title_Foundations\_1.21_Title_Foundations.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.22_Title_Self_and_Inner_Work\1.22.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title II — Self & Inner Work
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.22
+parent: 1.20_QiCode
+---
+
+# Title II — Self & Inner Work
+_Awareness, habits, emotional systems, and personal development._
+
+---
+
+## Scope
+
+Title II governs principles related to self-awareness, personal growth, habit formation, emotional regulation, and the inner work required to show up authentically in all domains.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title II — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.22_Title_Self_and_Inner_Work\1.22.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.22_Title_Self_and_Inner_Work\_1.22_Title_Self_and_Inner_Work.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.22_Title_Self_and_Inner_Work\_1.22_Title_Self_and_Inner_Work.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.23_Title_Work_and_Creation\1.23.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title III — Work & Creation
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.23
+parent: 1.20_QiCode
+---
+
+# Title III — Work & Creation
+_Productivity, flow, manifestation, and creative output._
+
+---
+
+## Scope
+
+Title III establishes principles for how work gets done, creative processes, productivity systems, flow states, and the manifestation of ideas into reality.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title III — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.23_Title_Work_and_Creation\1.23.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.23_Title_Work_and_Creation\_1.23_Title_Work_and_Creation.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.23_Title_Work_and_Creation\_1.23_Title_Work_and_Creation.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.24_Title_Relations_and_Exchange\1.24.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title IV — Relations & Exchange
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.24
+parent: 1.20_QiCode
+---
+
+# Title IV — Relations & Exchange
+_Boundaries, reciprocity, connection, and interpersonal dynamics._
+
+---
+
+## Scope
+
+Title IV governs principles for relationships, boundaries, reciprocity, communication, and how I engage with others in personal, professional, and client contexts.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title IV — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.24_Title_Relations_and_Exchange\1.24.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.24_Title_Relations_and_Exchange\1.24.1_Principle_of_Social_Media_Guidelines.md
+================================================================================
+
+
+---
+title: §1 Principle of Social Media Guidelines
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-03
+last_updated: 2025-11-03
+status: active
+qi_decimal: 1.24.1
+parent: 1.24_Title_Relations_and_Exchange
+---
+
+# §1 Principle of Social Media Guidelines
+_Authentic connection, clear boundaries, and intentional presence online._
+
+---
+
+## Statute
+
+**I engage on social media with intention, authenticity, and respect for boundaries.**
+
+Social media engagement is an extension of real-world relationships. I commit to:
+
+1. **Authenticity first** — Share truth, not persona. Present work and thoughts as they are, without artificial polish or false humility.
+2. **Clear boundaries** — Separate personal, business, and client communication channels. Respect others' boundaries and honor my own.
+3. **Value over volume** — Post when I have something meaningful to share, not from obligation or habit. Quality over frequency.
+4. **Responsive engagement** — Acknowledge direct messages and meaningful interactions within 48 hours when possible, but never from a place of obligation.
+5. **No comparison spirals** — Use social media as a tool for connection and learning, not for measuring worth against others' highlight reels.
+6. **Credit and attribution** — Always credit original sources, ideas, and collaborators. Link generously to others' work.
+7. **Privacy protection** — Protect client information, private conversations, and personal boundaries. Never share without explicit consent.
+8. **Constructive discourse** — Engage in disagreement with curiosity, not combat. Disengage when conversations become harmful or unproductive.
+9. **Platform-specific norms** — Respect each platform's culture and purpose. LinkedIn for professional discourse, Twitter/X for quick thoughts, GitHub for technical collaboration.
+10. **Regular audit** — Review and prune accounts quarterly. Unfollow what no longer serves. Archive or delete outdated content when appropriate.
+
+---
+
+## Application
+
+This principle applies to:
+- All social media platforms (LinkedIn, Twitter/X, GitHub, email communication)
+- Personal accounts and professional profiles
+- Client interaction on social platforms
+- Content creation and sharing
+- Direct messaging and public replies
+- Platform presence and profile management
+- Cross-posting between platforms
+
+---
+
+## Exceptions
+
+- Client work may require specific platform engagement protocols that supersede general guidelines
+- Emergency or time-sensitive communication may override normal response timelines
+- Personal accounts may have more relaxed engagement patterns than professional accounts
+
+---
+
+## Related Principles
+
+- [§1 Principle of Awareness](../../1.21_Title_Foundations/1.21.1_Principle_of_Awareness.md) — Observation before reaction applies to online engagement
+- [Title VI — Identity & Integrity](../1.26_Title_Identity_and_Integrity/) — Authenticity in online presence
+
+---
+
+**Enacted: 2025-11-03**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.24_Title_Relations_and_Exchange\1.24.1_Principle_of_Social_Media_Guidelines.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.24_Title_Relations_and_Exchange\_1.24_Title_Relations_and_Exchange.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.24_Title_Relations_and_Exchange\_1.24_Title_Relations_and_Exchange.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.25_Title_Action_and_Automation\1.25.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title V — Action & Automation
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.25
+parent: 1.20_QiCode
+---
+
+# Title V — Action & Automation
+_Execution, energy management, movement, and systematic automation._
+
+---
+
+## Scope
+
+Title V establishes principles for taking action, managing energy, building systems and automations, and ensuring movement toward goals rather than stagnation.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title V — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.25_Title_Action_and_Automation\1.25.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.25_Title_Action_and_Automation\_1.25_Title_Action_and_Automation.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.25_Title_Action_and_Automation\_1.25_Title_Action_and_Automation.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.26_Title_Identity_and_Integrity\1.26.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title VI — Identity & Integrity
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.26
+parent: 1.20_QiCode
+---
+
+# Title VI — Identity & Integrity
+_Authenticity, naming, alignment, and truth._
+
+---
+
+## Scope
+
+Title VI governs principles related to identity, authenticity, integrity, naming conventions, alignment between values and actions, and truth-telling.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title VI — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.26_Title_Identity_and_Integrity\1.26.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.26_Title_Identity_and_Integrity\_1.26_Title_Identity_and_Integrity.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.26_Title_Identity_and_Integrity\_1.26_Title_Identity_and_Integrity.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.27_Title_Mind_and_Will\1.27.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title VII — Mind & Will
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.27
+parent: 1.20_QiCode
+---
+
+# Title VII — Mind & Will
+_Decision-making, thought hygiene, choice, and mental discipline._
+
+---
+
+## Scope
+
+Title VII establishes principles for decision-making processes, thought hygiene, mental discipline, willpower, and the management of cognitive resources.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title VII — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.27_Title_Mind_and_Will\1.27.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.27_Title_Mind_and_Will\_1.27_Title_Mind_and_Will.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.27_Title_Mind_and_Will\_1.27_Title_Mind_and_Will.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.28_Title_Cycles_and_Closure\1.28.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title VIII — Cycles & Closure
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.28
+parent: 1.20_QiCode
+---
+
+# Title VIII — Cycles & Closure
+_Endings, transitions, forgiveness, renewal, and completion._
+
+---
+
+## Scope
+
+Title VIII governs principles for completing cycles, managing endings and transitions, forgiveness, letting go, and the proper closure of projects, relationships, and phases.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title VIII — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.28_Title_Cycles_and_Closure\1.28.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.28_Title_Cycles_and_Closure\_1.28_Title_Cycles_and_Closure.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.28_Title_Cycles_and_Closure\_1.28_Title_Cycles_and_Closure.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.29_Title_Ethics_and_Evolution\1.29.00_Title_Index.md
+================================================================================
+
+
+---
+title: Title IX — Ethics & Evolution
+type: governance
+author: C. Rice-Velasquez
+created: 2025-11-02
+last_updated: 2025-11-02
+status: active
+qi_decimal: 1.29
+parent: 1.20_QiCode
+---
+
+# Title IX — Ethics & Evolution
+_Moral systems, feedback, growth, and continuous improvement._
+
+---
+
+## Scope
+
+Title IX establishes principles for ethical conduct, moral frameworks, feedback loops, continuous evolution, adaptation, and the integration of learning into systems and self.
+
+---
+
+## Principles
+
+| ID | Principle | Status |
+|----|-----------|--------|
+| _To be defined_ | | |
+
+---
+
+## Amendments
+
+| Date | Change | Rationale |
+|------|--------|-----------|
+| 2025-11-02 | Title established | Initial framework creation |
+
+---
+
+**Title IX — Enacted 2025-11-02**
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.29_Title_Ethics_and_Evolution\1.29.00_Title_Index.md
+================================================================================
+
+
+
+================================================================================
+FILE: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.29_Title_Ethics_and_Evolution\_1.29_Title_Ethics_and_Evolution.md
+================================================================================
+
+
+
+
+================================================================================
+END: c:\Users\codyr\My Drive\QiOne\1_QiEos\1.20_QiCode\1.29_Title_Ethics_and_Evolution\_1.29_Title_Ethics_and_Evolution.md
+================================================================================
+
+================================================================================
+FILE CONTINUES IN NEXT PART (part002)
+================================================================================

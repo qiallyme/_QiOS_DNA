@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QiApp · Shell</title>
+<style>body{margin:0;font-family:system-ui;background:#0b0f14;color:#e6ecf1}</style>
+</head><body>
+<main style="max-width:960px;margin:0 auto;padding:32px">
+  <h1>QiApp Shell</h1>
+  <p>Flat, no build tools required. Add your UI here.</p>
+  <div id="app"></div>
+</main>
+<script>
+  // minimal reactive-ish pattern without deps
+  const state = { count: 0 };
+  const el = document.getElementById('app');
+  const render = () => { el.innerHTML = `<button id="btn">Count: ${state.count}</button>`; document.getElementById('btn').onclick=()=>{state.count++;render();}; };
+  render();
+</script>
+</body></html>

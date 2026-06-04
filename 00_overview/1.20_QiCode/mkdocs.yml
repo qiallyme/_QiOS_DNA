@@ -1,0 +1,121 @@
+site_name: QiCode — Personal Legal Code
+site_description: The statutes by which I live and work
+site_author: C. Rice-Velasquez
+site_url: https://qicode.qially.me
+
+# Repository
+repo_name: QiCode
+repo_url: https://github.com/yourusername/QiOne
+edit_uri: edit/main/1_QiEos/1.20_QiCode/
+
+# Copyright
+copyright: Copyright &copy; 2025 C. Rice-Velasquez
+
+# Configuration
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
+    - content.tooltips
+  icon:
+    repo: fontawesome/brands/github
+
+# Extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+      baselevel: 2
+
+# Plugins
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Title I — Foundations:
+    - Title I Overview: 1.21_Title_Foundations/1.21.00_Title_Index.md
+    - §1 Principle of Awareness: 1.21_Title_Foundations/1.21.1_Principle_of_Awareness.md
+    - §2 Principle of Presence: 1.21_Title_Foundations/1.21.2_Principle_of_Presence.md
+  - Title II — Self & Inner Work:
+    - Title II Overview: 1.22_Title_Self_and_Inner_Work/1.22.00_Title_Index.md
+  - Title III — Work & Creation:
+    - Title III Overview: 1.23_Title_Work_and_Creation/1.23.00_Title_Index.md
+  - Title IV — Relations & Exchange:
+    - Title IV Overview: 1.24_Title_Relations_and_Exchange/1.24.00_Title_Index.md
+  - Title V — Action & Automation:
+    - Title V Overview: 1.25_Title_Action_and_Automation/1.25.00_Title_Index.md
+  - Title VI — Identity & Integrity:
+    - Title VI Overview: 1.26_Title_Identity_and_Integrity/1.26.00_Title_Index.md
+  - Title VII — Mind & Will:
+    - Title VII Overview: 1.27_Title_Mind_and_Will/1.27.00_Title_Index.md
+  - Title VIII — Cycles & Closure:
+    - Title VIII Overview: 1.28_Title_Cycles_and_Closure/1.28.00_Title_Index.md
+  - Title IX — Ethics & Evolution:
+    - Title IX Overview: 1.29_Title_Ethics_and_Evolution/1.29.00_Title_Index.md
+  - Title X — Legacy & Design:
+    - Title X Overview: 1.30_Title_Legacy_and_Design/1.30.00_Title_Index.md
+
+# Docs directory (use current directory)
+docs_dir: .
+
+# Exclude patterns (files/folders to ignore)
+exclude_docs: |
+  README.md
+  MKDOCS_SETUP.md
+  _TEMPLATE_Principle.md
+  requirements.txt
+  mkdocs.yml
+  venv/
+  site/
+  .git/
+
