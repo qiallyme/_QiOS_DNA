@@ -8,54 +8,84 @@
   "navigation": {
     "groups": [
       {
-        "group": "Start Here",
+        "group": "QiOS DNA",
         "pages": [
           "index",
-          "00_manifest/QiOS_Master_Manifest",
-          "00_manifest/Source_of_Truth_Map",
-          "00_manifest/Repo_Index"
+          "01_QiDNA/overview",
+          "01_QiDNA/responsibilities",
+          "01_QiDNA/flows",
+          "01_QiDNA/structure"
         ]
       },
       {
-        "group": "Doctrine",
+        "group": "QiEOS",
         "pages": [
-          "01_doctrine/QiOS_Core_Doctrine",
-          "01_doctrine/Naming_Model",
-          "01_doctrine/System_Boundaries"
+          "01_QiDNA/QiEOS/doctrine",
+          "01_QiDNA/QiEOS/decisions",
+          "01_QiDNA/QiEOS/naming"
         ]
       },
       {
-        "group": "Architecture",
+        "group": "QiAccess",
         "pages": [
-          "02_architecture/System_Map",
-          "02_architecture/Runtime_Map",
-          "02_architecture/Module_Relationships"
+          "10_QiAccess/overview",
+          "10_QiAccess/responsibilities",
+          "10_QiAccess/flows",
+          "10_QiAccess/structure"
         ]
       },
       {
-        "group": "Schema",
+        "group": "QiSystem",
         "pages": [
-          "03_schema/QiLife_Data_Spine",
-          "03_schema/Entity_Model",
-          "03_schema/Event_Model",
-          "03_schema/Link_Model"
+          "20_QiSystem/overview",
+          "20_QiSystem/responsibilities",
+          "20_QiSystem/flows",
+          "20_QiSystem/structure"
         ]
       },
       {
-        "group": "Modules",
+        "group": "QiServer",
         "pages": [
-          "05_modules/QiAccess_Start/index",
-          "05_modules/QiLife/index",
-          "05_modules/QiJourney/index",
-          "05_modules/QiServer/index",
-          "05_modules/QiNexus/index",
-          "05_modules/QiArchive/index"
+          "30_QiServer/overview",
+          "30_QiServer/responsibilities",
+          "30_QiServer/flows",
+          "30_QiServer/structure"
         ]
       },
       {
-        "group": "Reconciliation",
+        "group": "QiCapture",
         "pages": [
-          "07_reconciliation/2026-06-04_QiOS_QiLife_QiAccess_Reconciliation"
+          "40_QiCapture/overview",
+          "40_QiCapture/responsibilities",
+          "40_QiCapture/flows",
+          "40_QiCapture/structure"
+        ]
+      },
+      {
+        "group": "QiNexus",
+        "pages": [
+          "50_QiNexus/overview",
+          "50_QiNexus/responsibilities",
+          "50_QiNexus/flows",
+          "50_QiNexus/structure"
+        ]
+      },
+      {
+        "group": "QiApp QiLife",
+        "pages": [
+          "60_QiApp_QiLife/overview",
+          "60_QiApp_QiLife/responsibilities",
+          "60_QiApp_QiLife/flows",
+          "60_QiApp_QiLife/structure"
+        ]
+      },
+      {
+        "group": "QiConnect",
+        "pages": [
+          "70_QiConnect/overview",
+          "70_QiConnect/responsibilities",
+          "70_QiConnect/flows",
+          "70_QiConnect/structure"
         ]
       }
     ]

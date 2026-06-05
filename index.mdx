@@ -1,28 +1,24 @@
 # QiOS DNA
 
-QiOS DNA is the master doctrine and documentation surface for the QiOS ecosystem.
+QiOS DNA is the source-of-truth map for the live Qi system.
 
-> Raw imports are evidence. Canonical docs are law. Generated exports are snapshots.
-
-## Start here
-
-- [QiOS Master Map](00_QiEOS/system_map/QiOS_Master_Map)
-- [QiOS Core Doctrine](00_QiEOS/doctrine/QiOS_Core_Doctrine)
-- [Source of Truth Rules](20_QiSystem/rules/Source_of_Truth_Rules)
-- [Initial Reconciliation](00_QiEOS/reconciliation/2026-06-04_initial_reconciliation)
-
-## System layers
+The active system model is:
 
 ```text
-00_QiEOS       = brain / doctrine / decisions / receipts / system map
-10_QiOS_Start  = cockpit / launcher / front door / docs surface
-20_QiSystem    = rules / schemas / naming / database doctrine / lifecycle rules
-30_QiServer    = infrastructure / docker / cloudflare / deploy / monitoring / backups
-40_QiCapture   = ingestion / OCR / parsing / embeddings / pipelines
-50_QiNexus     = storage model / file system backbone
-60_QiApps      = standalone apps, sites, tools
-70_QiConnect   = external integrations / APIs / workers
-packages       = shared code, types, utilities, db helpers
-scripts        = thin wrappers only
-toolbox        = local tools and power utilities
+QiAccess -> QiLife -> (QiSystem + QiNexus + QiCapture + QiConnect)
 ```
+
+QiAccess is the entry point. QiLife is the operating application. QiSystem, QiNexus, QiCapture, and QiConnect are the supporting layers around it. QiServer hosts and protects the runtime services that make those layers usable.
+
+Use the mirrored folders to answer questions by location:
+
+- `01_QiDNA`: system identity, doctrine, naming, and governance.
+- `10_QiAccess`: portal, navigation shell, and daily entry point.
+- `20_QiSystem`: operational integrity, audits, logs, generated outputs, and maintenance.
+- `30_QiServer`: protected runtime host and service deployment facts.
+- `40_QiCapture`: intake, ingestion, review, and approval.
+- `50_QiNexus`: storage backbone and folder discipline.
+- `60_QiApp_QiLife`: private life operating app and QiBit workflow.
+- `70_QiConnect`: integrations, public/private access boundaries, and service connections.
+
+Legacy source material is held in `legacy_intake/` and is not active documentation.
