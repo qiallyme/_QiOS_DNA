@@ -1,11 +1,4 @@
 # QiOS DNA
 
-Master documentation home for the mirrored Qi system.
+Mirrored documentation filesystem for the Qi system. Every active folder contains one `_folder.md`. The single-page viewer is `site/index.html`.
 
-Active model:
-
-```text
-QiAccess -> QiLife -> (QiSystem + QiNexus + QiCapture + QiConnect)
-```
-
-Active documentation lives in the numbered system-layer folders. Legacy source material is isolated in `legacy_intake/`.

@@ -8,84 +8,18 @@
   "navigation": {
     "groups": [
       {
-        "group": "QiOS DNA",
+        "group": "System Mirror",
         "pages": [
-          "index",
-          "01_QiDNA/overview",
-          "01_QiDNA/responsibilities",
-          "01_QiDNA/flows",
-          "01_QiDNA/structure"
-        ]
-      },
-      {
-        "group": "QiEOS",
-        "pages": [
-          "01_QiDNA/QiEOS/doctrine",
-          "01_QiDNA/QiEOS/decisions",
-          "01_QiDNA/QiEOS/naming"
-        ]
-      },
-      {
-        "group": "QiAccess",
-        "pages": [
-          "10_QiAccess/overview",
-          "10_QiAccess/responsibilities",
-          "10_QiAccess/flows",
-          "10_QiAccess/structure"
-        ]
-      },
-      {
-        "group": "QiSystem",
-        "pages": [
-          "20_QiSystem/overview",
-          "20_QiSystem/responsibilities",
-          "20_QiSystem/flows",
-          "20_QiSystem/structure"
-        ]
-      },
-      {
-        "group": "QiServer",
-        "pages": [
-          "30_QiServer/overview",
-          "30_QiServer/responsibilities",
-          "30_QiServer/flows",
-          "30_QiServer/structure"
-        ]
-      },
-      {
-        "group": "QiCapture",
-        "pages": [
-          "40_QiCapture/overview",
-          "40_QiCapture/responsibilities",
-          "40_QiCapture/flows",
-          "40_QiCapture/structure"
-        ]
-      },
-      {
-        "group": "QiNexus",
-        "pages": [
-          "50_QiNexus/overview",
-          "50_QiNexus/responsibilities",
-          "50_QiNexus/flows",
-          "50_QiNexus/structure"
-        ]
-      },
-      {
-        "group": "QiApp QiLife",
-        "pages": [
-          "60_QiApp_QiLife/overview",
-          "60_QiApp_QiLife/responsibilities",
-          "60_QiApp_QiLife/flows",
-          "60_QiApp_QiLife/structure"
-        ]
-      },
-      {
-        "group": "QiConnect",
-        "pages": [
-          "70_QiConnect/overview",
-          "70_QiConnect/responsibilities",
-          "70_QiConnect/flows",
-          "70_QiConnect/structure"
+          "01_QiDNA/_folder",
+          "01_QiDNA/QiEOS/_folder",
+          "10_QiAccess/_folder",
+          "20_QiSystem/_folder",
+          "30_QiServer/_folder",
+          "40_QiCapture/_folder",
+          "50_QiNexus/_folder",
+          "60_QiApp_QiLife/_folder",
+          "70_QiConnect/_folder",
+          "site/_folder"
         ]
       }
     ]
