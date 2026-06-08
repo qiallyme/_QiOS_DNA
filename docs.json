@@ -8,54 +8,18 @@
   "navigation": {
     "groups": [
       {
-        "group": "Start Here",
+        "group": "System Mirror",
         "pages": [
-          "index",
-          "00_manifest/QiOS_Master_Manifest",
-          "00_manifest/Source_of_Truth_Map",
-          "00_manifest/Repo_Index"
-        ]
-      },
-      {
-        "group": "Doctrine",
-        "pages": [
-          "01_doctrine/QiOS_Core_Doctrine",
-          "01_doctrine/Naming_Model",
-          "01_doctrine/System_Boundaries"
-        ]
-      },
-      {
-        "group": "Architecture",
-        "pages": [
-          "02_architecture/System_Map",
-          "02_architecture/Runtime_Map",
-          "02_architecture/Module_Relationships"
-        ]
-      },
-      {
-        "group": "Schema",
-        "pages": [
-          "03_schema/QiLife_Data_Spine",
-          "03_schema/Entity_Model",
-          "03_schema/Event_Model",
-          "03_schema/Link_Model"
-        ]
-      },
-      {
-        "group": "Modules",
-        "pages": [
-          "05_modules/QiAccess_Start/index",
-          "05_modules/QiLife/index",
-          "05_modules/QiJourney/index",
-          "05_modules/QiServer/index",
-          "05_modules/QiNexus/index",
-          "05_modules/QiArchive/index"
-        ]
-      },
-      {
-        "group": "Reconciliation",
-        "pages": [
-          "07_reconciliation/2026-06-04_QiOS_QiLife_QiAccess_Reconciliation"
+          "01_QiDNA/_folder",
+          "01_QiDNA/QiEOS/_folder",
+          "10_QiAccess/_folder",
+          "20_QiSystem/_folder",
+          "30_QiServer/_folder",
+          "40_QiCapture/_folder",
+          "50_QiNexus/_folder",
+          "60_QiApp_QiLife/_folder",
+          "70_QiConnect/_folder",
+          "site/_folder"
         ]
       }
     ]
