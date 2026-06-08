@@ -2,382 +2,145 @@ const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
 
-// --- Configuration ---
-const ROOT_DIR = __dirname;
-const OUT_DIR = path.join(ROOT_DIR, 'site');
-const OUT_FILE = path.join(OUT_DIR, 'index.html');
+const root = __dirname;
+const outputDir = path.join(root, 'site');
+const outputFile = path.join(outputDir, 'index.html');
+const excluded = new Set(['.git', '.github', 'node_modules']);
+const required = [
+  '_..md',
+  '01_QiDNA/_01_QiDNA.md',
+  '20_QiSystem/2026-06-08_qilife_governance_audit.md',
+  '60_QiApp_QiLife/_60_QiApp_QiLife.md'
+];
 
-// Directories to ignore
-const EXCLUDE_DIRS = new Set(['node_modules', 'site', '.git', '.github']);
-
-// --- File Discovery ---
-function findMarkdownFiles(dir, fileList = []) {
-    const items = fs.readdirSync(dir, { withFileTypes: true });
-    
-    for (const item of items) {
-        const fullPath = path.join(dir, item.name);
-        
-        if (item.isDirectory()) {
-            if (!EXCLUDE_DIRS.has(item.name) && !item.name.startsWith('.')) {
-                findMarkdownFiles(fullPath, fileList);
-            }
-        } else if (item.isFile() && item.name.startsWith('_') && item.name.endsWith('.md')) {
-            fileList.push(fullPath);
-        }
-    }
-    
-    return fileList;
+function posix(value) {
+  return value.split(path.sep).join('/');
 }
 
-// --- Content Processing ---
-function processFiles(files) {
-    const sections = [];
-    
-    for (const file of files) {
-        const content = fs.readFileSync(file, 'utf-8');
-        const htmlContent = marked.parse(content);
-        
-        const fileName = path.basename(file, '.md');
-        const cleanName = fileName.replace(/^_+/, ''); 
-        const title = cleanName.replace(/_/g, ' ');    
-        const id = cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-'); 
-
-        sections.push({ id, title, htmlContent, sourceFile: file, originalName: cleanName });
+function discover(dir, files = []) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true })
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory() && !excluded.has(entry.name) && !entry.name.startsWith('.')) {
+      discover(fullPath, files);
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+      files.push(fullPath);
     }
-    
-    sections.sort((a, b) => a.originalName.localeCompare(b.originalName));
-    return sections;
+  }
+  return files;
 }
 
-// --- HTML Generation ---
-function generateHTML(sections) {
-    const navLinks = sections.map(section => 
-        `<li><a href="#${section.id}" class="nav-link">${section.title}</a></li>`
-    ).join('\n');
+function escapeHtml(value) {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
-    const contentSections = sections.map(section => `
-        <section id="${section.id}" class="doc-section">
-            ${section.htmlContent}
-        </section>
-    `).join('\n');
+function slug(value) {
+  return value.toLowerCase().replace(/\.md$/, '').replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'repository-root';
+}
 
-    return `<!DOCTYPE html>
+function makeDocument(file) {
+  const relativePath = posix(path.relative(root, file));
+  const markdown = fs.readFileSync(file, 'utf8');
+  const heading = markdown.match(/^#\s+(.+)$/m);
+  const fallback = path.basename(file, '.md').replace(/^_+/, '').replace(/_/g, ' ');
+  const directory = path.posix.dirname(relativePath);
+  return {
+    id: slug(relativePath),
+    path: relativePath,
+    group: directory === '.' ? 'Repository' : directory,
+    title: heading ? heading[1].trim() : (fallback === '..' ? 'Repository Root' : fallback),
+    search: `${relativePath} ${markdown}`.toLowerCase(),
+    html: marked.parse(markdown)
+  };
+}
+
+function render(documents) {
+  const groups = new Map();
+  for (const doc of documents) {
+    if (!groups.has(doc.group)) groups.set(doc.group, []);
+    groups.get(doc.group).push(doc);
+  }
+
+  const navigation = [...groups.entries()].map(([group, docs]) => `
+    <li class="nav-group">
+      <div class="group-title">${escapeHtml(group)}</div>
+      <ul>${docs.map((doc) => `
+        <li class="nav-item" data-search="${escapeHtml(doc.search)}">
+          <a class="nav-link" href="#${doc.id}">${escapeHtml(doc.title)}</a>
+        </li>`).join('')}
+      </ul>
+    </li>`).join('');
+
+  const content = documents.map((doc) => `
+    <article id="${doc.id}" class="doc" data-search="${escapeHtml(doc.search)}">
+      <div class="source-path">${escapeHtml(doc.path)}</div>
+      ${doc.html}
+    </article>`).join('');
+
+  return `<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation</title>
-    <style>
-        :root {
-            --bg-color: #f4f4f5;
-            --card-bg: #ffffff;
-            --text-main: #3f3f46;
-            --text-heading: #18181b;
-            --sidebar-bg: #fafafa;
-            --sidebar-border: #e4e4e7;
-            --accent: #0284c7;
-            --accent-hover: #0369a1;
-            --accent-light: #e0f2fe;
-            --code-bg: #f1f5f9;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --header-height: 60px;
-        }
-
-        * { box-sizing: border-box; }
-
-        html { 
-            scroll-behavior: smooth; 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            margin: 0; padding: 0;
-            display: flex;
-            color: var(--text-main);
-            background-color: var(--bg-color);
-            line-height: 1.6;
-        }
-
-        /* Mobile Header */
-        #mobile-header {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: var(--header-height);
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--sidebar-border);
-            z-index: 900;
-            align-items: center;
-            padding: 0 1.5rem;
-            box-shadow: var(--shadow);
-        }
-
-        #menu-btn {
-            background: none; border: none;
-            font-size: 1.5rem; color: var(--text-heading);
-            cursor: pointer; padding: 0.5rem;
-            margin-left: -0.5rem; margin-right: 1rem;
-        }
-
-        #mobile-header h1 {
-            font-size: 1.25rem; margin: 0; color: var(--text-heading);
-        }
-
-        /* Sidebar Navigation */
-        #sidebar-overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 950;
-            opacity: 0; transition: opacity 0.3s;
-        }
-
-        nav {
-            width: 280px; height: 100vh;
-            position: fixed; top: 0; left: 0;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--sidebar-border);
-            overflow-y: auto; z-index: 1000;
-            padding: 2rem 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        nav h1 {
-            font-size: 1.25rem; color: var(--text-heading);
-            margin: 0 0 1.5rem 0; padding-bottom: 1rem;
-            border-bottom: 1px solid var(--sidebar-border);
-        }
-
-        nav ul { list-style: none; padding: 0; margin: 0; }
-        nav li { margin-bottom: 0.25rem; }
-
-        nav a {
-            text-decoration: none; color: var(--text-main);
-            font-size: 0.95rem; font-weight: 500;
-            display: block; padding: 0.5rem 0.75rem;
-            border-radius: 6px; transition: all 0.2s;
-        }
-
-        nav a:hover { background-color: var(--sidebar-border); }
-        
-        /* Active State for Navigation */
-        nav a.active {
-            background-color: var(--accent-light);
-            color: var(--accent);
-            border-left: 4px solid var(--accent);
-            padding-left: calc(0.75rem - 4px);
-        }
-
-        /* Main Content Area */
-        main {
-            margin-left: 280px;
-            padding: 3rem;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .content-wrapper {
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .doc-section {
-            background: var(--card-bg);
-            padding: 2.5rem 3rem;
-            margin-bottom: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--sidebar-border);
-            scroll-margin-top: 2rem;
-        }
-
-        /* Typography */
-        h1, h2, h3, h4 { color: var(--text-heading); margin-top: 1.5rem; font-weight: 600; }
-        .doc-section > h1:first-child, .doc-section > h2:first-child { margin-top: 0; }
-        h1 { font-size: 2rem; border-bottom: 2px solid var(--sidebar-border); padding-bottom: 0.5rem; }
-        h2 { font-size: 1.5rem; }
-        
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-
-        code {
-            background-color: var(--code-bg); padding: 0.2em 0.4em;
-            border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.9em;
-        }
-        pre {
-            background-color: var(--text-heading); color: #f8fafc;
-            padding: 1.25rem; border-radius: 8px; overflow-x: auto;
-        }
-        pre code { background-color: transparent; color: inherit; padding: 0; }
-
-        blockquote {
-            border-left: 4px solid var(--accent);
-            background: var(--accent-light);
-            margin: 1.5rem 0; padding: 1rem 1.5rem;
-            border-radius: 0 8px 8px 0; color: #0c4a6e;
-        }
-
-        /* Back to Top Button */
-        #back-to-top {
-            position: fixed; bottom: 2rem; right: 2rem;
-            background: var(--accent); color: white;
-            width: 3rem; height: 3rem; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: none; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
-            opacity: 0; visibility: hidden;
-            transition: all 0.3s; transform: translateY(10px);
-            z-index: 800;
-        }
-        #back-to-top.visible {
-            opacity: 1; visibility: visible; transform: translateY(0);
-        }
-        #back-to-top:hover { background: var(--accent-hover); transform: translateY(-3px); }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            #mobile-header { display: flex; }
-            nav h1 { display: none; } /* Hide duplicate title in sidebar on mobile */
-            
-            nav {
-                transform: translateX(-100%);
-                padding-top: var(--header-height);
-            }
-            nav.open { transform: translateX(0); }
-            
-            #sidebar-overlay.open { display: block; opacity: 1; }
-
-            main { margin-left: 0; padding: 1rem; padding-top: calc(var(--header-height) + 1rem); }
-            .doc-section { padding: 1.5rem; border-radius: 8px; scroll-margin-top: calc(var(--header-height) + 1rem); }
-            
-            #back-to-top { bottom: 1.5rem; right: 1.5rem; }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="QiOS DNA governance, architecture, system, and QiLife documentation.">
+<title>QiOS DNA</title>
+<style>
+:root{--bg:#f7f5fb;--surface:#fff;--sidebar:#18112b;--muted:#b9add1;--border:#e6e0ef;--text:#342e3e;--heading:#17121f;--accent:#7c3aed;--soft:#ede9fe;--code:#f2eff6;--header:62px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);background:var(--bg);font:16px/1.68 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}
+.mobile-header{display:none;position:fixed;inset:0 0 auto;height:var(--header);padding:0 1rem;align-items:center;gap:.8rem;color:#fff;background:var(--sidebar);z-index:20}.menu{border:0;color:#fff;background:transparent;font-size:1.5rem;cursor:pointer}.overlay{display:none}
+nav{position:fixed;inset:0 auto 0 0;width:310px;padding:1.4rem 1.05rem;overflow-y:auto;color:#fff;background:var(--sidebar);z-index:30}.brand{margin:0;font-size:1.45rem}.tagline{margin:.1rem 0 1rem;color:var(--muted);font-size:.83rem}.tools{position:sticky;top:-1.4rem;padding:1.4rem 0 .8rem;background:var(--sidebar);z-index:2}
+.search{width:100%;padding:.7rem .8rem;border:1px solid #4d3f66;border-radius:8px;color:#fff;background:#251b38;outline:none}.search:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,.2)}.tool-row{display:flex;gap:.5rem;margin-top:.55rem}.tool{flex:1;padding:.5rem;border:1px solid #4d3f66;border-radius:7px;color:#eee9f8;background:#251b38;cursor:pointer}.tool:hover,.tool.active{border-color:#a78bfa;background:#392554}
+nav ul{margin:0;padding:0;list-style:none}.nav-group{margin:0 0 1rem}.group-title{margin:0 0 .3rem;color:var(--muted);font-size:.7rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase;overflow-wrap:anywhere}.nav-link{display:block;padding:.42rem .62rem;border-radius:6px;color:#f5f3ff;font-size:.9rem;text-decoration:none}.nav-link:hover,.nav-link.active{color:#fff;background:rgba(124,58,237,.52)}
+.hidden{display:none!important}main{margin-left:310px;padding:2.3rem}.content{width:min(940px,100%);margin:0 auto}.intro{margin-bottom:1.35rem}.intro h1{margin:0;border:0}.intro p{margin:.2rem 0 0;color:#655b72}.status{min-height:1.5rem;margin:.5rem 0 0;color:#655b72;font-size:.9rem}
+.doc{margin:0 0 1.6rem;padding:2.5rem 3rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:0 8px 30px rgba(38,24,56,.06);scroll-margin-top:1.5rem}body.focus .doc{display:none}body.focus .doc.focused{display:block}.source-path{margin:0 0 1.4rem;padding:.42rem .65rem;border-radius:6px;color:#665c72;background:var(--code);font:.78rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+h1,h2,h3,h4{color:var(--heading);line-height:1.25}h1{padding-bottom:.55rem;border-bottom:2px solid var(--border);font-size:2rem}h2{margin-top:2rem;font-size:1.45rem}a{color:var(--accent)}code{padding:.15em .35em;border-radius:4px;background:var(--code)}pre{padding:1.1rem;border-radius:8px;color:#f8f7fa;background:#211a2d;overflow-x:auto}pre code{padding:0;color:inherit;background:transparent}table{display:block;width:100%;border-collapse:collapse;overflow-x:auto}th,td{padding:.65rem;border:1px solid var(--border);text-align:left;vertical-align:top}blockquote{margin-left:0;padding-left:1rem;border-left:4px solid var(--accent)}
+.top{position:fixed;right:1.4rem;bottom:1.4rem;display:none;width:44px;height:44px;border:0;border-radius:50%;color:#fff;background:var(--accent);cursor:pointer}.top.visible{display:block}
+@media(max-width:800px){.mobile-header{display:flex}nav{width:min(88vw,330px);padding-top:calc(var(--header) + .75rem);transform:translateX(-100%);transition:transform .2s ease}nav.open{transform:translateX(0)}.overlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}nav .brand,nav .tagline{display:none}.tools{top:calc(-1 * (var(--header) + .75rem));padding-top:calc(var(--header) + .75rem)}main{margin-left:0;padding:calc(var(--header) + 1rem) 1rem 1rem}.doc{padding:1.3rem;border-radius:10px;scroll-margin-top:calc(var(--header) + .75rem)}h1{font-size:1.65rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
 </head>
 <body>
-
-    <div id="mobile-header">
-        <button id="menu-btn" aria-label="Toggle Menu">☰</button>
-        <h1>Documentation</h1>
-    </div>
-
-    <div id="sidebar-overlay"></div>
-
-    <nav id="sidebar">
-        <h1>Documentation</h1>
-        <ul>${navLinks}</ul>
-    </nav>
-
-    <main>
-        <div class="content-wrapper">
-            ${contentSections}
-        </div>
-    </main>
-
-    <button id="back-to-top" aria-label="Back to Top">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-    </button>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Mobile Menu Toggle Logic
-            const menuBtn = document.getElementById('menu-btn');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            function toggleMenu() {
-                const isOpen = sidebar.classList.contains('open');
-                if (isOpen) {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('open');
-                    document.body.style.overflow = ''; // Restore scrolling
-                } else {
-                    sidebar.classList.add('open');
-                    overlay.classList.add('open');
-                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-                }
-            }
-
-            menuBtn.addEventListener('click', toggleMenu);
-            overlay.addEventListener('click', toggleMenu);
-            
-            // Close menu when a link is clicked (on mobile)
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) toggleMenu();
-                });
-            });
-
-            // Back to Top Button Logic
-            const backToTopBtn = document.getElementById('back-to-top');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    backToTopBtn.classList.add('visible');
-                } else {
-                    backToTopBtn.classList.remove('visible');
-                }
-            });
-
-            backToTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-
-            // Scroll Spy (Highlight active section in sidebar)
-            const sections = document.querySelectorAll('.doc-section');
-            const observerOptions = {
-                root: null,
-                rootMargin: '-20% 0px -60% 0px', // Triggers when section is roughly in the top third of screen
-                threshold: 0
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const id = entry.target.getAttribute('id');
-                        
-                        // Remove active class from all links
-                        navLinks.forEach(link => link.classList.remove('active'));
-                        
-                        // Add active class to the current link
-                        const activeLink = document.querySelector(\`.nav-link[href="#\${id}"]\`);
-                        if (activeLink) {
-                            activeLink.classList.add('active');
-                            
-                            // Ensure the active link is visible in the sidebar scroll area
-                            activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }
-                    }
-                });
-            }, observerOptions);
-
-            sections.forEach(section => observer.observe(section));
-        });
-    </script>
+<header class="mobile-header"><button class="menu" type="button" aria-label="Open navigation">&#9776;</button><strong>QiOS DNA</strong></header>
+<div class="overlay"></div>
+<nav aria-label="Documentation navigation">
+  <h1 class="brand">QiOS DNA</h1><p class="tagline">Governance and system mirror</p>
+  <div class="tools">
+    <label class="group-title" for="search">Find a document</label>
+    <input id="search" class="search" type="search" placeholder="Search titles and content" autocomplete="off">
+    <div class="tool-row"><button id="focus" class="tool" type="button" aria-pressed="false">Focus mode</button><button id="clear" class="tool" type="button">Clear</button></div>
+  </div>
+  <ul>${navigation}</ul>
+</nav>
+<main><div class="content">
+  <header class="intro"><h1>QiOS DNA</h1><p>${documents.length} source documents rendered from the repository.</p><div class="status" aria-live="polite"></div></header>
+  ${content}
+</div></main>
+<button class="top" type="button" aria-label="Back to top">&#8593;</button>
+<script>
+const body=document.body,nav=document.querySelector('nav'),overlay=document.querySelector('.overlay'),menu=document.querySelector('.menu'),search=document.querySelector('#search'),clear=document.querySelector('#clear'),focus=document.querySelector('#focus'),status=document.querySelector('.status'),topButton=document.querySelector('.top');
+const links=[...document.querySelectorAll('.nav-link')],items=[...document.querySelectorAll('.nav-item')],groups=[...document.querySelectorAll('.nav-group')],docs=[...document.querySelectorAll('.doc')];let activeId=docs[0]?.id||'';
+function closeNav(){nav.classList.remove('open');overlay.classList.remove('open')}function setFocus(id){activeId=id||activeId;docs.forEach(doc=>doc.classList.toggle('focused',doc.id===activeId))}
+function filter(){const term=search.value.trim().toLowerCase();let count=0;items.forEach(item=>{const match=!term||item.dataset.search.includes(term);item.classList.toggle('hidden',!match);if(match)count++});groups.forEach(group=>group.classList.toggle('hidden',![...group.querySelectorAll('.nav-item')].some(item=>!item.classList.contains('hidden'))));docs.forEach(doc=>doc.classList.toggle('hidden',!!term&&!doc.dataset.search.includes(term)));status.textContent=term?count+' matching document'+(count===1?'':'s'):''}
+menu.addEventListener('click',()=>{nav.classList.toggle('open');overlay.classList.toggle('open')});overlay.addEventListener('click',closeNav);links.forEach(link=>link.addEventListener('click',()=>{setFocus(link.hash.slice(1));closeNav()}));search.addEventListener('input',filter);clear.addEventListener('click',()=>{search.value='';filter();search.focus()});focus.addEventListener('click',()=>{const enabled=body.classList.toggle('focus');focus.classList.toggle('active',enabled);focus.setAttribute('aria-pressed',String(enabled));focus.textContent=enabled?'Show all':'Focus mode';setFocus(activeId)});topButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));window.addEventListener('scroll',()=>topButton.classList.toggle('visible',window.scrollY>500),{passive:true});
+const observer=new IntersectionObserver(entries=>{const visible=entries.find(entry=>entry.isIntersecting);if(!visible)return;activeId=visible.target.id;links.forEach(link=>link.classList.toggle('active',link.hash==='#'+activeId))},{rootMargin:'-15% 0px -70% 0px'});docs.forEach(doc=>observer.observe(doc));setFocus(activeId);
+</script>
 </body>
 </html>`;
 }
 
-// --- Main Execution ---
-function build() {
-    console.log('🚀 Starting documentation build...');
-    
-    if (!fs.existsSync(OUT_DIR)) {
-        fs.mkdirSync(OUT_DIR, { recursive: true });
-    }
-
-    const mdFiles = findMarkdownFiles(ROOT_DIR);
-    if (mdFiles.length === 0) {
-        console.warn('⚠️ No markdown files matching "_*.md" were found.');
-    } else {
-        console.log(`📄 Found ${mdFiles.length} documentation files.`);
-    }
-
-    const sections = processFiles(mdFiles);
-    const finalHtml = generateHTML(sections);
-
-    fs.writeFileSync(OUT_FILE, finalHtml);
-    console.log(`✅ Build complete! Site generated at: ${OUT_FILE}`);
+const files = discover(root);
+const documents = files.map(makeDocument);
+const found = new Set(documents.map((doc) => doc.path));
+const missing = required.filter((file) => !found.has(file));
+if (missing.length) throw new Error(`Required documentation missing: ${missing.join(', ')}`);
+if (!documents.length) throw new Error('No Markdown documents were discovered.');
+const html = render(documents);
+for (const doc of documents) {
+  if (!html.includes(`id="${doc.id}"`)) throw new Error(`Generated output missing ${doc.path}`);
 }
-
-build();
+fs.mkdirSync(outputDir, { recursive: true });
+fs.writeFileSync(outputFile, html.replace(/[ 	]+$/gm, ""));
+console.log(`Built ${documents.length} documents into ${posix(path.relative(root, outputFile))}.`);

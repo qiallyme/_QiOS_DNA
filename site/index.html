@@ -1,14 +1,1458 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>QiOS DNA Mirror</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <aside class="nav"><div class="nav-title">QiOS DNA</div><nav id="nav-tree" aria-label="Documentation tree"></nav></aside>
-    <main class="content"><header class="page-header"><h1>Single-Page System Mirror</h1><p>Every section is loaded from a physical folder <code>_folder.md</code>.</p></header><div id="docs"></div></main>
-    <script src="script.js"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="QiOS DNA governance, architecture, system, and QiLife documentation.">
+<title>QiOS DNA</title>
+<style>
+:root{--bg:#f7f5fb;--surface:#fff;--sidebar:#18112b;--muted:#b9add1;--border:#e6e0ef;--text:#342e3e;--heading:#17121f;--accent:#7c3aed;--soft:#ede9fe;--code:#f2eff6;--header:62px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);background:var(--bg);font:16px/1.68 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}
+.mobile-header{display:none;position:fixed;inset:0 0 auto;height:var(--header);padding:0 1rem;align-items:center;gap:.8rem;color:#fff;background:var(--sidebar);z-index:20}.menu{border:0;color:#fff;background:transparent;font-size:1.5rem;cursor:pointer}.overlay{display:none}
+nav{position:fixed;inset:0 auto 0 0;width:310px;padding:1.4rem 1.05rem;overflow-y:auto;color:#fff;background:var(--sidebar);z-index:30}.brand{margin:0;font-size:1.45rem}.tagline{margin:.1rem 0 1rem;color:var(--muted);font-size:.83rem}.tools{position:sticky;top:-1.4rem;padding:1.4rem 0 .8rem;background:var(--sidebar);z-index:2}
+.search{width:100%;padding:.7rem .8rem;border:1px solid #4d3f66;border-radius:8px;color:#fff;background:#251b38;outline:none}.search:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,.2)}.tool-row{display:flex;gap:.5rem;margin-top:.55rem}.tool{flex:1;padding:.5rem;border:1px solid #4d3f66;border-radius:7px;color:#eee9f8;background:#251b38;cursor:pointer}.tool:hover,.tool.active{border-color:#a78bfa;background:#392554}
+nav ul{margin:0;padding:0;list-style:none}.nav-group{margin:0 0 1rem}.group-title{margin:0 0 .3rem;color:var(--muted);font-size:.7rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase;overflow-wrap:anywhere}.nav-link{display:block;padding:.42rem .62rem;border-radius:6px;color:#f5f3ff;font-size:.9rem;text-decoration:none}.nav-link:hover,.nav-link.active{color:#fff;background:rgba(124,58,237,.52)}
+.hidden{display:none!important}main{margin-left:310px;padding:2.3rem}.content{width:min(940px,100%);margin:0 auto}.intro{margin-bottom:1.35rem}.intro h1{margin:0;border:0}.intro p{margin:.2rem 0 0;color:#655b72}.status{min-height:1.5rem;margin:.5rem 0 0;color:#655b72;font-size:.9rem}
+.doc{margin:0 0 1.6rem;padding:2.5rem 3rem;border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:0 8px 30px rgba(38,24,56,.06);scroll-margin-top:1.5rem}body.focus .doc{display:none}body.focus .doc.focused{display:block}.source-path{margin:0 0 1.4rem;padding:.42rem .65rem;border-radius:6px;color:#665c72;background:var(--code);font:.78rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+h1,h2,h3,h4{color:var(--heading);line-height:1.25}h1{padding-bottom:.55rem;border-bottom:2px solid var(--border);font-size:2rem}h2{margin-top:2rem;font-size:1.45rem}a{color:var(--accent)}code{padding:.15em .35em;border-radius:4px;background:var(--code)}pre{padding:1.1rem;border-radius:8px;color:#f8f7fa;background:#211a2d;overflow-x:auto}pre code{padding:0;color:inherit;background:transparent}table{display:block;width:100%;border-collapse:collapse;overflow-x:auto}th,td{padding:.65rem;border:1px solid var(--border);text-align:left;vertical-align:top}blockquote{margin-left:0;padding-left:1rem;border-left:4px solid var(--accent)}
+.top{position:fixed;right:1.4rem;bottom:1.4rem;display:none;width:44px;height:44px;border:0;border-radius:50%;color:#fff;background:var(--accent);cursor:pointer}.top.visible{display:block}
+@media(max-width:800px){.mobile-header{display:flex}nav{width:min(88vw,330px);padding-top:calc(var(--header) + .75rem);transform:translateX(-100%);transition:transform .2s ease}nav.open{transform:translateX(0)}.overlay.open{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:25}nav .brand,nav .tagline{display:none}.tools{top:calc(-1 * (var(--header) + .75rem));padding-top:calc(var(--header) + .75rem)}main{margin-left:0;padding:calc(var(--header) + 1rem) 1rem 1rem}.doc{padding:1.3rem;border-radius:10px;scroll-margin-top:calc(var(--header) + .75rem)}h1{font-size:1.65rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="mobile-header"><button class="menu" type="button" aria-label="Open navigation">&#9776;</button><strong>QiOS DNA</strong></header>
+<div class="overlay"></div>
+<nav aria-label="Documentation navigation">
+  <h1 class="brand">QiOS DNA</h1><p class="tagline">Governance and system mirror</p>
+  <div class="tools">
+    <label class="group-title" for="search">Find a document</label>
+    <input id="search" class="search" type="search" placeholder="Search titles and content" autocomplete="off">
+    <div class="tool-row"><button id="focus" class="tool" type="button" aria-pressed="false">Focus mode</button><button id="clear" class="tool" type="button">Clear</button></div>
+  </div>
+  <ul>
+    <li class="nav-group">
+      <div class="group-title">Repository</div>
+      <ul>
+        <li class="nav-item" data-search="_..md # qios dna repository
+
+## overview
+
+qios dna is the mirrored documentation filesystem for the live qi system.
+
+the active model is:
+
+```text
+qiaccess -&gt; qilife -&gt; (qisystem + qinexus + qicapture + qiconnect)
+```
+
+## responsibilities
+
+- keep every physical folder documented by exactly one `_folder.md`.
+- keep documentation location-based.
+- keep active system-layer names stable.
+- keep the single-page mirror viewer in `site/`.
+
+## flows
+
+```text
+system folder -&gt; matching qidna folder -&gt; _folder.md
+```
+
+## structure
+
+active system folders:
+
+- `01_qidna`
+- `10_qiaccess`
+- `20_qisystem`
+- `30_qiserver`
+- `40_qicapture`
+- `50_qinexus`
+- `60_qiapp_qilife`
+- `70_qiconnect`
+
+the `site/` folder contains the single-page system mirror viewer.
+
+">
+          <a class="nav-link" href="#repository-root">QiOS DNA Repository</a>
+        </li>
+        <li class="nav-item" data-search="readme.md # qios dna
+
+mirrored documentation filesystem for the qi system. every active folder contains one `_folder.md`. the single-page viewer is `site/index.html`.
+
+">
+          <a class="nav-link" href="#readme">QiOS DNA</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">01_QiDNA</div>
+      <ul>
+        <li class="nav-item" data-search="01_qidna/_01_qidna.md # qidna
+
+## overview
+
+qidna is the governance and documentation layer for the qi system. it defines the mirror rule: documentation must live in the same layer as the thing it describes.
+
+the active system model is:
+
+```text
+qiaccess -&gt; qilife -&gt; (qisystem + qinexus + qicapture + qiconnect)
+```
+
+qidna names system layers, keeps their boundaries clear, and holds system-level doctrine in `01_qidna/qieos/`.
+
+## responsibilities
+
+- maintain the mirrored documentation structure.
+- keep system-layer names stable.
+- hold doctrine, philosophy, decisions, and system reasoning in `qieos/`.
+- prevent duplicate or conflicting source-of-truth documents.
+- record the active system model clearly and consistently.
+
+## flows
+
+```text
+question
+  -&gt; identify the system layer
+  -&gt; open the matching folder
+  -&gt; read _folder.md
+```
+
+runtime facts beat planning notes. active mirrored docs beat legacy documents. qieos explains why, but each layer owns its operating details.
+
+## structure
+
+```text
+01_qidna/
+├── _folder.md
+└── qieos/
+    └── _folder.md
+```
+
+">
+          <a class="nav-link" href="#01-qidna-01-qidna">QiDNA</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">01_QiDNA/QiEOS</div>
+      <ul>
+        <li class="nav-item" data-search="01_qidna/qieos/_qieos.md # qieos
+
+## overview
+
+qieos is the governing doctrine for the qi system.
+
+core rules:
+
+- flat over nested when a simpler structure answers the question.
+- linked over duplicated.
+- documented over remembered.
+- modular over massive.
+- runtime facts beat assumptions.
+- derived layers do not become truth by themselves.
+
+## responsibilities
+
+- hold doctrine, philosophy, decisions, and system reasoning.
+- keep system layer names fixed.
+- explain why the mirror structure exists.
+- resolve conflicts by aligning old material to the active system model.
+
+## flows
+
+```text
+doctrine or decision question
+  -&gt; 01_qidna/qieos/_folder.md
+  -&gt; apply reasoning to the matching system-layer folder
+```
+
+qieos explains why. each system folder documents what it owns and how it operates.
+
+## structure
+
+system layer names are fixed: qidna, qiaccess, qisystem, qiserver, qicapture, qinexus, qiapp qilife, and qiconnect.
+
+">
+          <a class="nav-link" href="#01-qidna-qieos-qieos">QiEOS</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">10_QiAccess</div>
+      <ul>
+        <li class="nav-item" data-search="10_qiaccess/_10_qiaccess.md # qiaccess
+
+## overview
+
+qiaccess is the portal and navigation shell for the system. it is the daily entry point for opening tools, seeing what needs attention, capturing quickly, and reaching system services.
+
+## responsibilities
+
+- provide the main portal and dashboard.
+- open real tools and services quickly.
+- present the seven-root navigation contract.
+- surface capture as a fast path.
+- point knowledge to canonical docs and references.
+- show system visibility without becoming the system layer itself.
+
+## flows
+
+```text
+open qiaccess
+  -&gt; see home for attention items
+  -&gt; use start to open tools
+  -&gt; use capture for immediate input
+  -&gt; use knowledge for references
+  -&gt; use system for runtime visibility
+```
+
+## structure
+
+qiaccess active navigation has seven roots: home, start, capture, knowledge, memory, insights, and system. system subroutes stay nested under system.
+
+">
+          <a class="nav-link" href="#10-qiaccess-10-qiaccess">QiAccess</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">20_QiSystem</div>
+      <ul>
+        <li class="nav-item" data-search="20_qisystem/_20_qisystem.md # qisystem
+
+## overview
+
+qisystem is the operational integrity layer. it tracks evidence that the system is running correctly and keeps generated operational material separate from product, portal, and doctrine docs.
+
+## responsibilities
+
+- logs and operational records.
+- audits and validation outputs.
+- backup and restore references.
+- health checks and verification results.
+- generated reports.
+- generated indexes and inventories.
+- maintenance notes and cleanup tasks.
+
+## flows
+
+```text
+runtime or service check
+  -&gt; health result
+  -&gt; audit or generated report
+  -&gt; maintenance action if needed
+  -&gt; retained qisystem record
+```
+
+## structure
+
+qisystem may contain physical subfolders for real operational records when needed. each subfolder must contain its own `_folder.md` when created.
+
+">
+          <a class="nav-link" href="#20-qisystem-20-qisystem">QiSystem</a>
+        </li>
+        <li class="nav-item" data-search="20_qisystem/2026-06-08_qilife_governance_audit.md # qilife governance-first repository audit
+
+date: 2026-06-08
+
+scope: read-only audit of the current qios dna repository, its git history, qilife planning material, and available persistence evidence. no application or database implementation was performed.
+
+## a. current repo state
+
+- workspace: `/home/qiadmin/qi_workspace/_qios_dna`
+- remote: `https://github.com/qiallyme/_qios_dna.git`
+- branch: `main`, aligned with `origin/main` at audit time.
+- working tree: clean at audit time.
+- latest commit: `0d58afd` (`fix folder doc naming to _foldername.md standard`), dated 2026-06-05.
+- the current repository is a qios documentation shell with a static html viewer. it is not a qilife application codebase.
+- current top-level system layers are `01_qidna`, `10_qiaccess`, `20_qisystem`, `30_qiserver`, `40_qicapture`, `50_qinexus`, `60_qiapp_qilife`, and `70_qiconnect`.
+
+## b. existing implemented pieces
+
+- governance and system-boundary documentation exists for the active qios layers.
+- `site/` contains a static single-page documentation viewer.
+- qilife has a documented conceptual lifecycle from capture through retrieval.
+- the active qilife document names proposed v1 entities: `qibits`, `buckets`, `threads`, `actions`, `action_steps`, `people`, `transactions`, `obligations`, `knowledge_items`, `documents`, `events`, `links`, `activity_log`, `ai_outputs`, and `daily_summaries`.
+- qicapture documents intake, interpretation review, and handoff to qilife.
+- qinexus documents durable storage buckets and folder alignment.
+- historical git revisions contain detailed planning for the qibit lifecycle, modules, data fields, seed data, build phases, and a local-first database strategy. commit `ed32390` removed that planning corpus from the active tree.
+- no current or historical matches were found for `keylife`, `humanops`, `communication playbook`, or `relationship triage` in the inspected repository revisions.
+
+## c. existing database setup
+
+- requested database path: `c:\qilabs\60_qiapps_qilife\data\db\qilife.sqlite`.
+- the database was not found at that path or at the corresponding mounted path `/mnt/c/qilabs/60_qiapps_qilife/data/db/qilife.sqlite`.
+- no `qilife.sqlite`, `qilife.sqlite3`, or `qilife.db` was found under the accessible `/home/qiadmin` or `/srv/qios` trees.
+- because the database is missing, it could not be opened and no tables could be inspected.
+- the current repository contains no sqlite database, sql schema, migrations, orm configuration, backend, api, or database connection configuration.
+- the static viewer does not use a backend or persistence layer.
+- historical planning prescribed sqlite for qilife v1, migrations from day one, and a later migration path to postgres. one historical document used a different location: `c:\qilifedata\db\qilife.sqlite`.
+- historical seed records and table definitions are documentation only, not executable database artifacts.
+
+## d. missing database foundation
+
+- no active canonical persistence decision.
+- no executable schema, constraints, indexes, or foreign keys.
+- no migration framework or initial migration.
+- no database initialization or health verification.
+- no canonical database path ownership.
+- no backend data-access layer.
+- no transaction or concurrency policy.
+- no backup, restore, export, or migration verification workflow.
+- no persistence tests.
+
+the active qilife documentation names tables but does not define an implementation-ready schema. the project is not currently using persistent, mock, or client-side application data because no current application implementation exists.
+
+## e. unfinished or suspicious tasks
+
+- `docs.json` references `_folder` pages, but the physical documents were renamed to `_foldername.md` files.
+- the readme and layer documentation still describe `_folder.md` as the required convention, while no `_folder.md` files remain.
+- `site/script.js` embeds copies of the markdown content instead of loading the physical documents, allowing the viewer and source documents to drift.
+- the viewer displays paths ending in `/_folder.md`, although those paths no longer exist.
+- `fix_folder_names.sh` remains after the repository-wide rename.
+- detailed schema, module, roadmap, seed, and migration planning was removed from the active tree without equivalent active replacements.
+
+## f. conflicts and duplicates
+
+- documentation naming conflict: `_folder.md` governance versus `_foldername.md` files.
+- navigation conflict: `docs.json` points to missing page names.
+- source duplication: markdown documents and embedded copies in `site/script.js`.
+- persistence conflict: historical qilife plans say sqlite first and postgres later, while other historical qios material alternately describes supabase/postgres as canonical, conditional, or legacy.
+- database path conflict: the requested `c:\qilabs\60_qiapps_qilife\data\db\qilife.sqlite` differs from the historically documented `c:\qilifedata\db\qilife.sqlite`.
+- product naming conflict remains unresolved because no keylife definition exists in the inspected repository.
+
+## g. recommended next step
+
+do not begin feature implementation until a governance decision record establishes:
+
+1. the canonical product name and repository ownership.
+2. sqlite or postgres authority for v1.
+3. the canonical database location.
+4. which removed historical schema material remains valid.
+5. migration ownership and versioning.
+6. one documentation filename convention and one documentation source of truth.
+
+after approval, the first implementation should be a migration-backed persistence foundation with schema verification tests, before ui or module development.
+">
+          <a class="nav-link" href="#20-qisystem-2026-06-08-qilife-governance-audit">QiLife Governance-First Repository Audit</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">30_QiServer</div>
+      <ul>
+        <li class="nav-item" data-search="30_qiserver/_30_qiserver.md # qiserver
+
+## overview
+
+qiserver is the protected runtime host for internal services. it contains live docker compose stacks, system services, private access routes, public restricted routes, and runtime configuration paths.
+
+verified runtime facts win over repo planning notes.
+
+## responsibilities
+
+- host protected runtime services.
+- keep runtime stack paths and service facts clear.
+- separate public restricted access from private-only access.
+- run docker compose stacks and systemd services.
+- verify local, tailnet, and public routes after changes.
+
+## flows
+
+```text
+inspect qiserver
+  -&gt; confirm repo, branch, remote, stack, ports, and working tree
+  -&gt; pull only from the confirmed repo
+  -&gt; back up runtime config before overwriting
+  -&gt; deploy or restart only the needed stack
+  -&gt; verify routes
+```
+
+## structure
+
+known runtime paths include `/srv/qios/stacks/_qiaccess_start`, `/srv/qios/stacks/_qiaccess_start/docker-compose.yml`, and `/srv/qios/apps/_qiaccess_start/qiaccess/config`.
+
+">
+          <a class="nav-link" href="#30-qiserver-30-qiserver">QiServer</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">40_QiCapture</div>
+      <ul>
+        <li class="nav-item" data-search="40_qicapture/_40_qicapture.md # qicapture
+
+## overview
+
+qicapture is the intake, ingestion, review, and approval layer. it protects raw input while turning it into usable qilife records.
+
+raw capture is sacred. ai interpretation is a draft until approved or trusted by explicit rules.
+
+## responsibilities
+
+- fast intake of raw thoughts, files, notes, messages, and documents.
+- preserve original capture text or source files.
+- create ingestion items.
+- run extraction or inspection.
+- produce draft interpretations.
+- support approve, edit, or reject review actions.
+- hand official records to qilife.
+
+## flows
+
+```text
+raw capture
+  -&gt; ingestion item
+  -&gt; extraction
+  -&gt; ai draft
+  -&gt; review
+  -&gt; approve, edit, or reject
+  -&gt; qibit, action, or thread
+```
+
+## structure
+
+qicapture records distinguish raw capture, ingestion item, extracted text or metadata, ai draft, review decision, official qilife object, and timeline/activity log entry.
+
+">
+          <a class="nav-link" href="#40-qicapture-40-qicapture">QiCapture</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">50_QiNexus</div>
+      <ul>
+        <li class="nav-item" data-search="50_qinexus/_50_qinexus.md # qinexus
+
+## overview
+
+qinexus is the storage backbone and folder discipline layer. it provides the durable workspace for life, projects, knowledge, data, reference material, and archive records.
+
+## responsibilities
+
+- folder discipline.
+- durable storage categories.
+- bucket alignment for qilife.
+- archive placement.
+- reference material placement.
+- data exports and structured datasets.
+
+## flows
+
+```text
+item needs storage
+  -&gt; identify bucket/domain
+  -&gt; place in matching qinexus location
+  -&gt; link from qilife record when applicable
+  -&gt; archive only when inactive or historical
+```
+
+## structure
+
+canonical buckets: `00 inbox`, `10 workbench`, `20 timeline`, `30 life`, `40 people`, `50 business`, `60 finance`, `70 legal`, `80 tech`, `90 assets`, `100 data`, `110 reference`, `900 archive`, and `990 system`.
+
+">
+          <a class="nav-link" href="#50-qinexus-50-qinexus">QiNexus</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">60_QiApp_QiLife</div>
+      <ul>
+        <li class="nav-item" data-search="60_qiapp_qilife/_60_qiapp_qilife.md # qiapp qilife
+
+## overview
+
+qilife is the private life operating app. it turns life chaos into qibits that can be captured, triaged, routed, acted on, documented, resolved, reflected on, and retrieved.
+
+## responsibilities
+
+- qibits.
+- timeline projection.
+- buckets.
+- threads.
+- actions and steps.
+- people, money, documents, events, and knowledge items.
+- context dock.
+- activity log.
+- ai outputs and retrieval.
+
+## flows
+
+```text
+capture
+  -&gt; bucket
+  -&gt; interpret
+  -&gt; relate
+  -&gt; slot
+  -&gt; breakdown
+  -&gt; enrich
+  -&gt; act
+  -&gt; resolve
+  -&gt; reflect
+  -&gt; retrieve
+```
+
+## structure
+
+core v1 tables: `qibits`, `buckets`, `threads`, `actions`, `action_steps`, `people`, `transactions`, `obligations`, `knowledge_items`, `documents`, `events`, `links`, `activity_log`, `ai_outputs`, and `daily_summaries`.
+
+">
+          <a class="nav-link" href="#60-qiapp-qilife-60-qiapp-qilife">QiApp QiLife</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">70_QiConnect</div>
+      <ul>
+        <li class="nav-item" data-search="70_qiconnect/_70_qiconnect.md # qiconnect
+
+## overview
+
+qiconnect is the integration and access-boundary layer. it documents how qi services connect to each other, to external providers, and to protected entrypoints.
+
+## responsibilities
+
+- external integrations.
+- api and webhook boundaries.
+- public restricted access paths.
+- private-only access paths.
+- tailscale and cloudflare access patterns.
+- service-to-service connection notes.
+- integration safety rules.
+
+## flows
+
+```text
+external request
+  -&gt; dns, policy, or tunnel endpoint
+  -&gt; protected qiserver route
+  -&gt; target service
+  -&gt; internal data service if required
+```
+
+## structure
+
+access classes are private only, public restricted, and public safe. known connection surfaces include cloudflare access, tailscale, localhost verification ports, docker compose networks, api endpoints, and webhooks.
+
+">
+          <a class="nav-link" href="#70-qiconnect-70-qiconnect">QiConnect</a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-group">
+      <div class="group-title">site</div>
+      <ul>
+        <li class="nav-item" data-search="site/_site.md # site
+
+## overview
+
+`site/` contains the single-page system mirror viewer.
+
+## responsibilities
+
+- render all active `_folder.md` files into one scrollable html page.
+- provide a location-based navigation tree.
+- preserve the physical folder hierarchy visually.
+
+## flows
+
+```text
+open site/index.html
+  -&gt; navigation tree loads
+  -&gt; click folder link
+  -&gt; scroll to matching rendered _folder.md section
+```
+
+## structure
+
+```text
+site/
+├── _folder.md
+├── index.html
+├── script.js
+└── style.css
+```
+
+">
+          <a class="nav-link" href="#site-site">Site</a>
+        </li>
+      </ul>
+    </li></ul>
+</nav>
+<main><div class="content">
+  <header class="intro"><h1>QiOS DNA</h1><p>13 source documents rendered from the repository.</p><div class="status" aria-live="polite"></div></header>
+
+    <article id="repository-root" class="doc" data-search="_..md # qios dna repository
+
+## overview
+
+qios dna is the mirrored documentation filesystem for the live qi system.
+
+the active model is:
+
+```text
+qiaccess -&gt; qilife -&gt; (qisystem + qinexus + qicapture + qiconnect)
+```
+
+## responsibilities
+
+- keep every physical folder documented by exactly one `_folder.md`.
+- keep documentation location-based.
+- keep active system-layer names stable.
+- keep the single-page mirror viewer in `site/`.
+
+## flows
+
+```text
+system folder -&gt; matching qidna folder -&gt; _folder.md
+```
+
+## structure
+
+active system folders:
+
+- `01_qidna`
+- `10_qiaccess`
+- `20_qisystem`
+- `30_qiserver`
+- `40_qicapture`
+- `50_qinexus`
+- `60_qiapp_qilife`
+- `70_qiconnect`
+
+the `site/` folder contains the single-page system mirror viewer.
+
+">
+      <div class="source-path">_..md</div>
+      <h1>QiOS DNA Repository</h1>
+<h2>Overview</h2>
+<p>QiOS DNA is the mirrored documentation filesystem for the live Qi system.</p>
+<p>The active model is:</p>
+<pre><code class="language-text">QiAccess -&gt; QiLife -&gt; (QiSystem + QiNexus + QiCapture + QiConnect)
+</code></pre>
+<h2>Responsibilities</h2>
+<ul>
+<li>Keep every physical folder documented by exactly one <code>_folder.md</code>.</li>
+<li>Keep documentation location-based.</li>
+<li>Keep active system-layer names stable.</li>
+<li>Keep the single-page mirror viewer in <code>site/</code>.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">System folder -&gt; matching QiDNA folder -&gt; _folder.md
+</code></pre>
+<h2>Structure</h2>
+<p>Active system folders:</p>
+<ul>
+<li><code>01_QiDNA</code></li>
+<li><code>10_QiAccess</code></li>
+<li><code>20_QiSystem</code></li>
+<li><code>30_QiServer</code></li>
+<li><code>40_QiCapture</code></li>
+<li><code>50_QiNexus</code></li>
+<li><code>60_QiApp_QiLife</code></li>
+<li><code>70_QiConnect</code></li>
+</ul>
+<p>The <code>site/</code> folder contains the single-page system mirror viewer.</p>
+
+    </article>
+    <article id="01-qidna-01-qidna" class="doc" data-search="01_qidna/_01_qidna.md # qidna
+
+## overview
+
+qidna is the governance and documentation layer for the qi system. it defines the mirror rule: documentation must live in the same layer as the thing it describes.
+
+the active system model is:
+
+```text
+qiaccess -&gt; qilife -&gt; (qisystem + qinexus + qicapture + qiconnect)
+```
+
+qidna names system layers, keeps their boundaries clear, and holds system-level doctrine in `01_qidna/qieos/`.
+
+## responsibilities
+
+- maintain the mirrored documentation structure.
+- keep system-layer names stable.
+- hold doctrine, philosophy, decisions, and system reasoning in `qieos/`.
+- prevent duplicate or conflicting source-of-truth documents.
+- record the active system model clearly and consistently.
+
+## flows
+
+```text
+question
+  -&gt; identify the system layer
+  -&gt; open the matching folder
+  -&gt; read _folder.md
+```
+
+runtime facts beat planning notes. active mirrored docs beat legacy documents. qieos explains why, but each layer owns its operating details.
+
+## structure
+
+```text
+01_qidna/
+├── _folder.md
+└── qieos/
+    └── _folder.md
+```
+
+">
+      <div class="source-path">01_QiDNA/_01_QiDNA.md</div>
+      <h1>QiDNA</h1>
+<h2>Overview</h2>
+<p>QiDNA is the governance and documentation layer for the Qi system. It defines the mirror rule: documentation must live in the same layer as the thing it describes.</p>
+<p>The active system model is:</p>
+<pre><code class="language-text">QiAccess -&gt; QiLife -&gt; (QiSystem + QiNexus + QiCapture + QiConnect)
+</code></pre>
+<p>QiDNA names system layers, keeps their boundaries clear, and holds system-level doctrine in <code>01_QiDNA/QiEOS/</code>.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Maintain the mirrored documentation structure.</li>
+<li>Keep system-layer names stable.</li>
+<li>Hold doctrine, philosophy, decisions, and system reasoning in <code>QiEOS/</code>.</li>
+<li>Prevent duplicate or conflicting source-of-truth documents.</li>
+<li>Record the active system model clearly and consistently.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Question
+  -&gt; identify the system layer
+  -&gt; open the matching folder
+  -&gt; read _folder.md
+</code></pre>
+<p>Runtime facts beat planning notes. Active mirrored docs beat legacy documents. QiEOS explains why, but each layer owns its operating details.</p>
+<h2>Structure</h2>
+<pre><code class="language-text">01_QiDNA/
+├── _folder.md
+└── QiEOS/
+    └── _folder.md
+</code></pre>
+
+    </article>
+    <article id="01-qidna-qieos-qieos" class="doc" data-search="01_qidna/qieos/_qieos.md # qieos
+
+## overview
+
+qieos is the governing doctrine for the qi system.
+
+core rules:
+
+- flat over nested when a simpler structure answers the question.
+- linked over duplicated.
+- documented over remembered.
+- modular over massive.
+- runtime facts beat assumptions.
+- derived layers do not become truth by themselves.
+
+## responsibilities
+
+- hold doctrine, philosophy, decisions, and system reasoning.
+- keep system layer names fixed.
+- explain why the mirror structure exists.
+- resolve conflicts by aligning old material to the active system model.
+
+## flows
+
+```text
+doctrine or decision question
+  -&gt; 01_qidna/qieos/_folder.md
+  -&gt; apply reasoning to the matching system-layer folder
+```
+
+qieos explains why. each system folder documents what it owns and how it operates.
+
+## structure
+
+system layer names are fixed: qidna, qiaccess, qisystem, qiserver, qicapture, qinexus, qiapp qilife, and qiconnect.
+
+">
+      <div class="source-path">01_QiDNA/QiEOS/_QiEOS.md</div>
+      <h1>QiEOS</h1>
+<h2>Overview</h2>
+<p>QiEOS is the governing doctrine for the Qi system.</p>
+<p>Core rules:</p>
+<ul>
+<li>Flat over nested when a simpler structure answers the question.</li>
+<li>Linked over duplicated.</li>
+<li>Documented over remembered.</li>
+<li>Modular over massive.</li>
+<li>Runtime facts beat assumptions.</li>
+<li>Derived layers do not become truth by themselves.</li>
+</ul>
+<h2>Responsibilities</h2>
+<ul>
+<li>Hold doctrine, philosophy, decisions, and system reasoning.</li>
+<li>Keep system layer names fixed.</li>
+<li>Explain why the mirror structure exists.</li>
+<li>Resolve conflicts by aligning old material to the active system model.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Doctrine or decision question
+  -&gt; 01_QiDNA/QiEOS/_folder.md
+  -&gt; apply reasoning to the matching system-layer folder
+</code></pre>
+<p>QiEOS explains why. Each system folder documents what it owns and how it operates.</p>
+<h2>Structure</h2>
+<p>System layer names are fixed: QiDNA, QiAccess, QiSystem, QiServer, QiCapture, QiNexus, QiApp QiLife, and QiConnect.</p>
+
+    </article>
+    <article id="10-qiaccess-10-qiaccess" class="doc" data-search="10_qiaccess/_10_qiaccess.md # qiaccess
+
+## overview
+
+qiaccess is the portal and navigation shell for the system. it is the daily entry point for opening tools, seeing what needs attention, capturing quickly, and reaching system services.
+
+## responsibilities
+
+- provide the main portal and dashboard.
+- open real tools and services quickly.
+- present the seven-root navigation contract.
+- surface capture as a fast path.
+- point knowledge to canonical docs and references.
+- show system visibility without becoming the system layer itself.
+
+## flows
+
+```text
+open qiaccess
+  -&gt; see home for attention items
+  -&gt; use start to open tools
+  -&gt; use capture for immediate input
+  -&gt; use knowledge for references
+  -&gt; use system for runtime visibility
+```
+
+## structure
+
+qiaccess active navigation has seven roots: home, start, capture, knowledge, memory, insights, and system. system subroutes stay nested under system.
+
+">
+      <div class="source-path">10_QiAccess/_10_QiAccess.md</div>
+      <h1>QiAccess</h1>
+<h2>Overview</h2>
+<p>QiAccess is the portal and navigation shell for the system. It is the daily entry point for opening tools, seeing what needs attention, capturing quickly, and reaching system services.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Provide the main portal and dashboard.</li>
+<li>Open real tools and services quickly.</li>
+<li>Present the seven-root navigation contract.</li>
+<li>Surface Capture as a fast path.</li>
+<li>Point Knowledge to canonical docs and references.</li>
+<li>Show System visibility without becoming the system layer itself.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Open QiAccess
+  -&gt; see Home for attention items
+  -&gt; use Start to open tools
+  -&gt; use Capture for immediate input
+  -&gt; use Knowledge for references
+  -&gt; use System for runtime visibility
+</code></pre>
+<h2>Structure</h2>
+<p>QiAccess active navigation has seven roots: Home, Start, Capture, Knowledge, Memory, Insights, and System. System subroutes stay nested under System.</p>
+
+    </article>
+    <article id="20-qisystem-20-qisystem" class="doc" data-search="20_qisystem/_20_qisystem.md # qisystem
+
+## overview
+
+qisystem is the operational integrity layer. it tracks evidence that the system is running correctly and keeps generated operational material separate from product, portal, and doctrine docs.
+
+## responsibilities
+
+- logs and operational records.
+- audits and validation outputs.
+- backup and restore references.
+- health checks and verification results.
+- generated reports.
+- generated indexes and inventories.
+- maintenance notes and cleanup tasks.
+
+## flows
+
+```text
+runtime or service check
+  -&gt; health result
+  -&gt; audit or generated report
+  -&gt; maintenance action if needed
+  -&gt; retained qisystem record
+```
+
+## structure
+
+qisystem may contain physical subfolders for real operational records when needed. each subfolder must contain its own `_folder.md` when created.
+
+">
+      <div class="source-path">20_QiSystem/_20_QiSystem.md</div>
+      <h1>QiSystem</h1>
+<h2>Overview</h2>
+<p>QiSystem is the operational integrity layer. It tracks evidence that the system is running correctly and keeps generated operational material separate from product, portal, and doctrine docs.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Logs and operational records.</li>
+<li>Audits and validation outputs.</li>
+<li>Backup and restore references.</li>
+<li>Health checks and verification results.</li>
+<li>Generated reports.</li>
+<li>Generated indexes and inventories.</li>
+<li>Maintenance notes and cleanup tasks.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Runtime or service check
+  -&gt; health result
+  -&gt; audit or generated report
+  -&gt; maintenance action if needed
+  -&gt; retained QiSystem record
+</code></pre>
+<h2>Structure</h2>
+<p>QiSystem may contain physical subfolders for real operational records when needed. Each subfolder must contain its own <code>_folder.md</code> when created.</p>
+
+    </article>
+    <article id="20-qisystem-2026-06-08-qilife-governance-audit" class="doc" data-search="20_qisystem/2026-06-08_qilife_governance_audit.md # qilife governance-first repository audit
+
+date: 2026-06-08
+
+scope: read-only audit of the current qios dna repository, its git history, qilife planning material, and available persistence evidence. no application or database implementation was performed.
+
+## a. current repo state
+
+- workspace: `/home/qiadmin/qi_workspace/_qios_dna`
+- remote: `https://github.com/qiallyme/_qios_dna.git`
+- branch: `main`, aligned with `origin/main` at audit time.
+- working tree: clean at audit time.
+- latest commit: `0d58afd` (`fix folder doc naming to _foldername.md standard`), dated 2026-06-05.
+- the current repository is a qios documentation shell with a static html viewer. it is not a qilife application codebase.
+- current top-level system layers are `01_qidna`, `10_qiaccess`, `20_qisystem`, `30_qiserver`, `40_qicapture`, `50_qinexus`, `60_qiapp_qilife`, and `70_qiconnect`.
+
+## b. existing implemented pieces
+
+- governance and system-boundary documentation exists for the active qios layers.
+- `site/` contains a static single-page documentation viewer.
+- qilife has a documented conceptual lifecycle from capture through retrieval.
+- the active qilife document names proposed v1 entities: `qibits`, `buckets`, `threads`, `actions`, `action_steps`, `people`, `transactions`, `obligations`, `knowledge_items`, `documents`, `events`, `links`, `activity_log`, `ai_outputs`, and `daily_summaries`.
+- qicapture documents intake, interpretation review, and handoff to qilife.
+- qinexus documents durable storage buckets and folder alignment.
+- historical git revisions contain detailed planning for the qibit lifecycle, modules, data fields, seed data, build phases, and a local-first database strategy. commit `ed32390` removed that planning corpus from the active tree.
+- no current or historical matches were found for `keylife`, `humanops`, `communication playbook`, or `relationship triage` in the inspected repository revisions.
+
+## c. existing database setup
+
+- requested database path: `c:\qilabs\60_qiapps_qilife\data\db\qilife.sqlite`.
+- the database was not found at that path or at the corresponding mounted path `/mnt/c/qilabs/60_qiapps_qilife/data/db/qilife.sqlite`.
+- no `qilife.sqlite`, `qilife.sqlite3`, or `qilife.db` was found under the accessible `/home/qiadmin` or `/srv/qios` trees.
+- because the database is missing, it could not be opened and no tables could be inspected.
+- the current repository contains no sqlite database, sql schema, migrations, orm configuration, backend, api, or database connection configuration.
+- the static viewer does not use a backend or persistence layer.
+- historical planning prescribed sqlite for qilife v1, migrations from day one, and a later migration path to postgres. one historical document used a different location: `c:\qilifedata\db\qilife.sqlite`.
+- historical seed records and table definitions are documentation only, not executable database artifacts.
+
+## d. missing database foundation
+
+- no active canonical persistence decision.
+- no executable schema, constraints, indexes, or foreign keys.
+- no migration framework or initial migration.
+- no database initialization or health verification.
+- no canonical database path ownership.
+- no backend data-access layer.
+- no transaction or concurrency policy.
+- no backup, restore, export, or migration verification workflow.
+- no persistence tests.
+
+the active qilife documentation names tables but does not define an implementation-ready schema. the project is not currently using persistent, mock, or client-side application data because no current application implementation exists.
+
+## e. unfinished or suspicious tasks
+
+- `docs.json` references `_folder` pages, but the physical documents were renamed to `_foldername.md` files.
+- the readme and layer documentation still describe `_folder.md` as the required convention, while no `_folder.md` files remain.
+- `site/script.js` embeds copies of the markdown content instead of loading the physical documents, allowing the viewer and source documents to drift.
+- the viewer displays paths ending in `/_folder.md`, although those paths no longer exist.
+- `fix_folder_names.sh` remains after the repository-wide rename.
+- detailed schema, module, roadmap, seed, and migration planning was removed from the active tree without equivalent active replacements.
+
+## f. conflicts and duplicates
+
+- documentation naming conflict: `_folder.md` governance versus `_foldername.md` files.
+- navigation conflict: `docs.json` points to missing page names.
+- source duplication: markdown documents and embedded copies in `site/script.js`.
+- persistence conflict: historical qilife plans say sqlite first and postgres later, while other historical qios material alternately describes supabase/postgres as canonical, conditional, or legacy.
+- database path conflict: the requested `c:\qilabs\60_qiapps_qilife\data\db\qilife.sqlite` differs from the historically documented `c:\qilifedata\db\qilife.sqlite`.
+- product naming conflict remains unresolved because no keylife definition exists in the inspected repository.
+
+## g. recommended next step
+
+do not begin feature implementation until a governance decision record establishes:
+
+1. the canonical product name and repository ownership.
+2. sqlite or postgres authority for v1.
+3. the canonical database location.
+4. which removed historical schema material remains valid.
+5. migration ownership and versioning.
+6. one documentation filename convention and one documentation source of truth.
+
+after approval, the first implementation should be a migration-backed persistence foundation with schema verification tests, before ui or module development.
+">
+      <div class="source-path">20_QiSystem/2026-06-08_qilife_governance_audit.md</div>
+      <h1>QiLife Governance-First Repository Audit</h1>
+<p>Date: 2026-06-08</p>
+<p>Scope: Read-only audit of the current QiOS DNA repository, its Git history, QiLife planning material, and available persistence evidence. No application or database implementation was performed.</p>
+<h2>A. Current Repo State</h2>
+<ul>
+<li>Workspace: <code>/home/qiadmin/qi_workspace/_QiOS_DNA</code></li>
+<li>Remote: <code>https://github.com/qiallyme/_QiOS_DNA.git</code></li>
+<li>Branch: <code>main</code>, aligned with <code>origin/main</code> at audit time.</li>
+<li>Working tree: clean at audit time.</li>
+<li>Latest commit: <code>0d58afd</code> (<code>Fix folder doc naming to _FolderName.md standard</code>), dated 2026-06-05.</li>
+<li>The current repository is a QiOS documentation shell with a static HTML viewer. It is not a QiLife application codebase.</li>
+<li>Current top-level system layers are <code>01_QiDNA</code>, <code>10_QiAccess</code>, <code>20_QiSystem</code>, <code>30_QiServer</code>, <code>40_QiCapture</code>, <code>50_QiNexus</code>, <code>60_QiApp_QiLife</code>, and <code>70_QiConnect</code>.</li>
+</ul>
+<h2>B. Existing Implemented Pieces</h2>
+<ul>
+<li>Governance and system-boundary documentation exists for the active QiOS layers.</li>
+<li><code>site/</code> contains a static single-page documentation viewer.</li>
+<li>QiLife has a documented conceptual lifecycle from capture through retrieval.</li>
+<li>The active QiLife document names proposed v1 entities: <code>qibits</code>, <code>buckets</code>, <code>threads</code>, <code>actions</code>, <code>action_steps</code>, <code>people</code>, <code>transactions</code>, <code>obligations</code>, <code>knowledge_items</code>, <code>documents</code>, <code>events</code>, <code>links</code>, <code>activity_log</code>, <code>ai_outputs</code>, and <code>daily_summaries</code>.</li>
+<li>QiCapture documents intake, interpretation review, and handoff to QiLife.</li>
+<li>QiNexus documents durable storage buckets and folder alignment.</li>
+<li>Historical Git revisions contain detailed planning for the QiBit lifecycle, modules, data fields, seed data, build phases, and a local-first database strategy. Commit <code>ed32390</code> removed that planning corpus from the active tree.</li>
+<li>No current or historical matches were found for <code>KeyLife</code>, <code>HumanOps</code>, <code>Communication Playbook</code>, or <code>Relationship Triage</code> in the inspected repository revisions.</li>
+</ul>
+<h2>C. Existing Database Setup</h2>
+<ul>
+<li>Requested database path: <code>C:\QiLabs\60_QiApps_qilife\data\db\qilife.sqlite</code>.</li>
+<li>The database was not found at that path or at the corresponding mounted path <code>/mnt/c/QiLabs/60_QiApps_qilife/data/db/qilife.sqlite</code>.</li>
+<li>No <code>qilife.sqlite</code>, <code>qilife.sqlite3</code>, or <code>qilife.db</code> was found under the accessible <code>/home/qiadmin</code> or <code>/srv/qios</code> trees.</li>
+<li>Because the database is missing, it could not be opened and no tables could be inspected.</li>
+<li>The current repository contains no SQLite database, SQL schema, migrations, ORM configuration, backend, API, or database connection configuration.</li>
+<li>The static viewer does not use a backend or persistence layer.</li>
+<li>Historical planning prescribed SQLite for QiLife v1, migrations from day one, and a later migration path to Postgres. One historical document used a different location: <code>C:\QiLifeData\db\qilife.sqlite</code>.</li>
+<li>Historical seed records and table definitions are documentation only, not executable database artifacts.</li>
+</ul>
+<h2>D. Missing Database Foundation</h2>
+<ul>
+<li>No active canonical persistence decision.</li>
+<li>No executable schema, constraints, indexes, or foreign keys.</li>
+<li>No migration framework or initial migration.</li>
+<li>No database initialization or health verification.</li>
+<li>No canonical database path ownership.</li>
+<li>No backend data-access layer.</li>
+<li>No transaction or concurrency policy.</li>
+<li>No backup, restore, export, or migration verification workflow.</li>
+<li>No persistence tests.</li>
+</ul>
+<p>The active QiLife documentation names tables but does not define an implementation-ready schema. The project is not currently using persistent, mock, or client-side application data because no current application implementation exists.</p>
+<h2>E. Unfinished or Suspicious Tasks</h2>
+<ul>
+<li><code>docs.json</code> references <code>_folder</code> pages, but the physical documents were renamed to <code>_FolderName.md</code> files.</li>
+<li>The README and layer documentation still describe <code>_folder.md</code> as the required convention, while no <code>_folder.md</code> files remain.</li>
+<li><code>site/script.js</code> embeds copies of the Markdown content instead of loading the physical documents, allowing the viewer and source documents to drift.</li>
+<li>The viewer displays paths ending in <code>/_folder.md</code>, although those paths no longer exist.</li>
+<li><code>fix_folder_names.sh</code> remains after the repository-wide rename.</li>
+<li>Detailed schema, module, roadmap, seed, and migration planning was removed from the active tree without equivalent active replacements.</li>
+</ul>
+<h2>F. Conflicts and Duplicates</h2>
+<ul>
+<li>Documentation naming conflict: <code>_folder.md</code> governance versus <code>_FolderName.md</code> files.</li>
+<li>Navigation conflict: <code>docs.json</code> points to missing page names.</li>
+<li>Source duplication: Markdown documents and embedded copies in <code>site/script.js</code>.</li>
+<li>Persistence conflict: historical QiLife plans say SQLite first and Postgres later, while other historical QiOS material alternately describes Supabase/Postgres as canonical, conditional, or legacy.</li>
+<li>Database path conflict: the requested <code>C:\QiLabs\60_QiApps_qilife\data\db\qilife.sqlite</code> differs from the historically documented <code>C:\QiLifeData\db\qilife.sqlite</code>.</li>
+<li>Product naming conflict remains unresolved because no KeyLife definition exists in the inspected repository.</li>
+</ul>
+<h2>G. Recommended Next Step</h2>
+<p>Do not begin feature implementation until a governance decision record establishes:</p>
+<ol>
+<li>The canonical product name and repository ownership.</li>
+<li>SQLite or Postgres authority for v1.</li>
+<li>The canonical database location.</li>
+<li>Which removed historical schema material remains valid.</li>
+<li>Migration ownership and versioning.</li>
+<li>One documentation filename convention and one documentation source of truth.</li>
+</ol>
+<p>After approval, the first implementation should be a migration-backed persistence foundation with schema verification tests, before UI or module development.</p>
+
+    </article>
+    <article id="30-qiserver-30-qiserver" class="doc" data-search="30_qiserver/_30_qiserver.md # qiserver
+
+## overview
+
+qiserver is the protected runtime host for internal services. it contains live docker compose stacks, system services, private access routes, public restricted routes, and runtime configuration paths.
+
+verified runtime facts win over repo planning notes.
+
+## responsibilities
+
+- host protected runtime services.
+- keep runtime stack paths and service facts clear.
+- separate public restricted access from private-only access.
+- run docker compose stacks and systemd services.
+- verify local, tailnet, and public routes after changes.
+
+## flows
+
+```text
+inspect qiserver
+  -&gt; confirm repo, branch, remote, stack, ports, and working tree
+  -&gt; pull only from the confirmed repo
+  -&gt; back up runtime config before overwriting
+  -&gt; deploy or restart only the needed stack
+  -&gt; verify routes
+```
+
+## structure
+
+known runtime paths include `/srv/qios/stacks/_qiaccess_start`, `/srv/qios/stacks/_qiaccess_start/docker-compose.yml`, and `/srv/qios/apps/_qiaccess_start/qiaccess/config`.
+
+">
+      <div class="source-path">30_QiServer/_30_QiServer.md</div>
+      <h1>QiServer</h1>
+<h2>Overview</h2>
+<p>QiServer is the protected runtime host for internal services. It contains live Docker Compose stacks, system services, private access routes, public restricted routes, and runtime configuration paths.</p>
+<p>Verified runtime facts win over repo planning notes.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Host protected runtime services.</li>
+<li>Keep runtime stack paths and service facts clear.</li>
+<li>Separate public restricted access from private-only access.</li>
+<li>Run Docker Compose stacks and systemd services.</li>
+<li>Verify local, tailnet, and public routes after changes.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Inspect qiserver
+  -&gt; confirm repo, branch, remote, stack, ports, and working tree
+  -&gt; pull only from the confirmed repo
+  -&gt; back up runtime config before overwriting
+  -&gt; deploy or restart only the needed stack
+  -&gt; verify routes
+</code></pre>
+<h2>Structure</h2>
+<p>Known runtime paths include <code>/srv/qios/stacks/_qiaccess_start</code>, <code>/srv/qios/stacks/_qiaccess_start/docker-compose.yml</code>, and <code>/srv/qios/apps/_QiAccess_Start/qiaccess/config</code>.</p>
+
+    </article>
+    <article id="40-qicapture-40-qicapture" class="doc" data-search="40_qicapture/_40_qicapture.md # qicapture
+
+## overview
+
+qicapture is the intake, ingestion, review, and approval layer. it protects raw input while turning it into usable qilife records.
+
+raw capture is sacred. ai interpretation is a draft until approved or trusted by explicit rules.
+
+## responsibilities
+
+- fast intake of raw thoughts, files, notes, messages, and documents.
+- preserve original capture text or source files.
+- create ingestion items.
+- run extraction or inspection.
+- produce draft interpretations.
+- support approve, edit, or reject review actions.
+- hand official records to qilife.
+
+## flows
+
+```text
+raw capture
+  -&gt; ingestion item
+  -&gt; extraction
+  -&gt; ai draft
+  -&gt; review
+  -&gt; approve, edit, or reject
+  -&gt; qibit, action, or thread
+```
+
+## structure
+
+qicapture records distinguish raw capture, ingestion item, extracted text or metadata, ai draft, review decision, official qilife object, and timeline/activity log entry.
+
+">
+      <div class="source-path">40_QiCapture/_40_QiCapture.md</div>
+      <h1>QiCapture</h1>
+<h2>Overview</h2>
+<p>QiCapture is the intake, ingestion, review, and approval layer. It protects raw input while turning it into usable QiLife records.</p>
+<p>Raw capture is sacred. AI interpretation is a draft until approved or trusted by explicit rules.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Fast intake of raw thoughts, files, notes, messages, and documents.</li>
+<li>Preserve original capture text or source files.</li>
+<li>Create ingestion items.</li>
+<li>Run extraction or inspection.</li>
+<li>Produce draft interpretations.</li>
+<li>Support approve, edit, or reject review actions.</li>
+<li>Hand official records to QiLife.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Raw capture
+  -&gt; ingestion item
+  -&gt; extraction
+  -&gt; AI draft
+  -&gt; review
+  -&gt; approve, edit, or reject
+  -&gt; QiBit, Action, or Thread
+</code></pre>
+<h2>Structure</h2>
+<p>QiCapture records distinguish raw capture, ingestion item, extracted text or metadata, AI draft, review decision, official QiLife object, and timeline/activity log entry.</p>
+
+    </article>
+    <article id="50-qinexus-50-qinexus" class="doc" data-search="50_qinexus/_50_qinexus.md # qinexus
+
+## overview
+
+qinexus is the storage backbone and folder discipline layer. it provides the durable workspace for life, projects, knowledge, data, reference material, and archive records.
+
+## responsibilities
+
+- folder discipline.
+- durable storage categories.
+- bucket alignment for qilife.
+- archive placement.
+- reference material placement.
+- data exports and structured datasets.
+
+## flows
+
+```text
+item needs storage
+  -&gt; identify bucket/domain
+  -&gt; place in matching qinexus location
+  -&gt; link from qilife record when applicable
+  -&gt; archive only when inactive or historical
+```
+
+## structure
+
+canonical buckets: `00 inbox`, `10 workbench`, `20 timeline`, `30 life`, `40 people`, `50 business`, `60 finance`, `70 legal`, `80 tech`, `90 assets`, `100 data`, `110 reference`, `900 archive`, and `990 system`.
+
+">
+      <div class="source-path">50_QiNexus/_50_QiNexus.md</div>
+      <h1>QiNexus</h1>
+<h2>Overview</h2>
+<p>QiNexus is the storage backbone and folder discipline layer. It provides the durable workspace for life, projects, knowledge, data, reference material, and archive records.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Folder discipline.</li>
+<li>Durable storage categories.</li>
+<li>Bucket alignment for QiLife.</li>
+<li>Archive placement.</li>
+<li>Reference material placement.</li>
+<li>Data exports and structured datasets.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Item needs storage
+  -&gt; identify bucket/domain
+  -&gt; place in matching QiNexus location
+  -&gt; link from QiLife record when applicable
+  -&gt; archive only when inactive or historical
+</code></pre>
+<h2>Structure</h2>
+<p>Canonical buckets: <code>00 Inbox</code>, <code>10 Workbench</code>, <code>20 Timeline</code>, <code>30 Life</code>, <code>40 People</code>, <code>50 Business</code>, <code>60 Finance</code>, <code>70 Legal</code>, <code>80 Tech</code>, <code>90 Assets</code>, <code>100 Data</code>, <code>110 Reference</code>, <code>900 Archive</code>, and <code>990 System</code>.</p>
+
+    </article>
+    <article id="60-qiapp-qilife-60-qiapp-qilife" class="doc" data-search="60_qiapp_qilife/_60_qiapp_qilife.md # qiapp qilife
+
+## overview
+
+qilife is the private life operating app. it turns life chaos into qibits that can be captured, triaged, routed, acted on, documented, resolved, reflected on, and retrieved.
+
+## responsibilities
+
+- qibits.
+- timeline projection.
+- buckets.
+- threads.
+- actions and steps.
+- people, money, documents, events, and knowledge items.
+- context dock.
+- activity log.
+- ai outputs and retrieval.
+
+## flows
+
+```text
+capture
+  -&gt; bucket
+  -&gt; interpret
+  -&gt; relate
+  -&gt; slot
+  -&gt; breakdown
+  -&gt; enrich
+  -&gt; act
+  -&gt; resolve
+  -&gt; reflect
+  -&gt; retrieve
+```
+
+## structure
+
+core v1 tables: `qibits`, `buckets`, `threads`, `actions`, `action_steps`, `people`, `transactions`, `obligations`, `knowledge_items`, `documents`, `events`, `links`, `activity_log`, `ai_outputs`, and `daily_summaries`.
+
+">
+      <div class="source-path">60_QiApp_QiLife/_60_QiApp_QiLife.md</div>
+      <h1>QiApp QiLife</h1>
+<h2>Overview</h2>
+<p>QiLife is the private life operating app. It turns life chaos into QiBits that can be captured, triaged, routed, acted on, documented, resolved, reflected on, and retrieved.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>QiBits.</li>
+<li>Timeline projection.</li>
+<li>Buckets.</li>
+<li>Threads.</li>
+<li>Actions and steps.</li>
+<li>People, money, documents, events, and knowledge items.</li>
+<li>Context Dock.</li>
+<li>Activity log.</li>
+<li>AI outputs and retrieval.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Capture
+  -&gt; Bucket
+  -&gt; Interpret
+  -&gt; Relate
+  -&gt; Slot
+  -&gt; Breakdown
+  -&gt; Enrich
+  -&gt; Act
+  -&gt; Resolve
+  -&gt; Reflect
+  -&gt; Retrieve
+</code></pre>
+<h2>Structure</h2>
+<p>Core v1 tables: <code>qibits</code>, <code>buckets</code>, <code>threads</code>, <code>actions</code>, <code>action_steps</code>, <code>people</code>, <code>transactions</code>, <code>obligations</code>, <code>knowledge_items</code>, <code>documents</code>, <code>events</code>, <code>links</code>, <code>activity_log</code>, <code>ai_outputs</code>, and <code>daily_summaries</code>.</p>
+
+    </article>
+    <article id="70-qiconnect-70-qiconnect" class="doc" data-search="70_qiconnect/_70_qiconnect.md # qiconnect
+
+## overview
+
+qiconnect is the integration and access-boundary layer. it documents how qi services connect to each other, to external providers, and to protected entrypoints.
+
+## responsibilities
+
+- external integrations.
+- api and webhook boundaries.
+- public restricted access paths.
+- private-only access paths.
+- tailscale and cloudflare access patterns.
+- service-to-service connection notes.
+- integration safety rules.
+
+## flows
+
+```text
+external request
+  -&gt; dns, policy, or tunnel endpoint
+  -&gt; protected qiserver route
+  -&gt; target service
+  -&gt; internal data service if required
+```
+
+## structure
+
+access classes are private only, public restricted, and public safe. known connection surfaces include cloudflare access, tailscale, localhost verification ports, docker compose networks, api endpoints, and webhooks.
+
+">
+      <div class="source-path">70_QiConnect/_70_QiConnect.md</div>
+      <h1>QiConnect</h1>
+<h2>Overview</h2>
+<p>QiConnect is the integration and access-boundary layer. It documents how Qi services connect to each other, to external providers, and to protected entrypoints.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>External integrations.</li>
+<li>API and webhook boundaries.</li>
+<li>Public restricted access paths.</li>
+<li>Private-only access paths.</li>
+<li>Tailscale and Cloudflare Access patterns.</li>
+<li>Service-to-service connection notes.</li>
+<li>Integration safety rules.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">External request
+  -&gt; DNS, policy, or tunnel endpoint
+  -&gt; protected QiServer route
+  -&gt; target service
+  -&gt; internal data service if required
+</code></pre>
+<h2>Structure</h2>
+<p>Access classes are Private Only, Public Restricted, and Public Safe. Known connection surfaces include Cloudflare Access, Tailscale, localhost verification ports, Docker Compose networks, API endpoints, and webhooks.</p>
+
+    </article>
+    <article id="readme" class="doc" data-search="readme.md # qios dna
+
+mirrored documentation filesystem for the qi system. every active folder contains one `_folder.md`. the single-page viewer is `site/index.html`.
+
+">
+      <div class="source-path">README.md</div>
+      <h1>QiOS DNA</h1>
+<p>Mirrored documentation filesystem for the Qi system. Every active folder contains one <code>_folder.md</code>. The single-page viewer is <code>site/index.html</code>.</p>
+
+    </article>
+    <article id="site-site" class="doc" data-search="site/_site.md # site
+
+## overview
+
+`site/` contains the single-page system mirror viewer.
+
+## responsibilities
+
+- render all active `_folder.md` files into one scrollable html page.
+- provide a location-based navigation tree.
+- preserve the physical folder hierarchy visually.
+
+## flows
+
+```text
+open site/index.html
+  -&gt; navigation tree loads
+  -&gt; click folder link
+  -&gt; scroll to matching rendered _folder.md section
+```
+
+## structure
+
+```text
+site/
+├── _folder.md
+├── index.html
+├── script.js
+└── style.css
+```
+
+">
+      <div class="source-path">site/_site.md</div>
+      <h1>Site</h1>
+<h2>Overview</h2>
+<p><code>site/</code> contains the single-page system mirror viewer.</p>
+<h2>Responsibilities</h2>
+<ul>
+<li>Render all active <code>_folder.md</code> files into one scrollable HTML page.</li>
+<li>Provide a location-based navigation tree.</li>
+<li>Preserve the physical folder hierarchy visually.</li>
+</ul>
+<h2>Flows</h2>
+<pre><code class="language-text">Open site/index.html
+  -&gt; navigation tree loads
+  -&gt; click folder link
+  -&gt; scroll to matching rendered _folder.md section
+</code></pre>
+<h2>Structure</h2>
+<pre><code class="language-text">site/
+├── _folder.md
+├── index.html
+├── script.js
+└── style.css
+</code></pre>
+
+    </article>
+</div></main>
+<button class="top" type="button" aria-label="Back to top">&#8593;</button>
+<script>
+const body=document.body,nav=document.querySelector('nav'),overlay=document.querySelector('.overlay'),menu=document.querySelector('.menu'),search=document.querySelector('#search'),clear=document.querySelector('#clear'),focus=document.querySelector('#focus'),status=document.querySelector('.status'),topButton=document.querySelector('.top');
+const links=[...document.querySelectorAll('.nav-link')],items=[...document.querySelectorAll('.nav-item')],groups=[...document.querySelectorAll('.nav-group')],docs=[...document.querySelectorAll('.doc')];let activeId=docs[0]?.id||'';
+function closeNav(){nav.classList.remove('open');overlay.classList.remove('open')}function setFocus(id){activeId=id||activeId;docs.forEach(doc=>doc.classList.toggle('focused',doc.id===activeId))}
+function filter(){const term=search.value.trim().toLowerCase();let count=0;items.forEach(item=>{const match=!term||item.dataset.search.includes(term);item.classList.toggle('hidden',!match);if(match)count++});groups.forEach(group=>group.classList.toggle('hidden',![...group.querySelectorAll('.nav-item')].some(item=>!item.classList.contains('hidden'))));docs.forEach(doc=>doc.classList.toggle('hidden',!!term&&!doc.dataset.search.includes(term)));status.textContent=term?count+' matching document'+(count===1?'':'s'):''}
+menu.addEventListener('click',()=>{nav.classList.toggle('open');overlay.classList.toggle('open')});overlay.addEventListener('click',closeNav);links.forEach(link=>link.addEventListener('click',()=>{setFocus(link.hash.slice(1));closeNav()}));search.addEventListener('input',filter);clear.addEventListener('click',()=>{search.value='';filter();search.focus()});focus.addEventListener('click',()=>{const enabled=body.classList.toggle('focus');focus.classList.toggle('active',enabled);focus.setAttribute('aria-pressed',String(enabled));focus.textContent=enabled?'Show all':'Focus mode';setFocus(activeId)});topButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));window.addEventListener('scroll',()=>topButton.classList.toggle('visible',window.scrollY>500),{passive:true});
+const observer=new IntersectionObserver(entries=>{const visible=entries.find(entry=>entry.isIntersecting);if(!visible)return;activeId=visible.target.id;links.forEach(link=>link.classList.toggle('active',link.hash==='#'+activeId))},{rootMargin:'-15% 0px -70% 0px'});docs.forEach(doc=>observer.observe(doc));setFocus(activeId);
+</script>
+</body>
 </html>
