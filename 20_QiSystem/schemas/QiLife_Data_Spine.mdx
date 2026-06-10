@@ -1,0 +1,33 @@
+# QiLife Data Spine
+
+QiLife is the living operational data spine of QiOS.
+
+The QiLife implementation repo contains the active app and detailed data-model docs. In QiOS DNA, this page is the canonical system-level summary.
+
+## V1 core tables
+
+```text
+qibits
+buckets
+threads
+actions
+action_steps
+people
+transactions
+obligations
+knowledge_items
+documents
+events
+links
+activity_log
+ai_outputs
+daily_summaries
+```
+
+## Canonical conventions
+
+- IDs use ULIDs where possible.
+- Notes and reflections are QiBit types, not separate doctrine roots.
+- Monetary values use integer cents.
+- Timeline is a projection over timestamped records, not its own source-of-truth table.
+- Repo docs imported into app knowledge views are read-only unless edited at source.
