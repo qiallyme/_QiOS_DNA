@@ -35,8 +35,16 @@ Runtime facts beat planning notes. Active mirrored docs beat legacy documents. Q
 
 ```text
 01_QiDNA/
-├── _folder.md
+├── _01_QiDNA.md
+├── Architecture/
+│   ├── _Architecture.md
+│   └── Decisions/
+│       └── _Decisions.md
+├── Schema/
+│   └── _Schema.md
+├── Reconciliation/
+│   └── _Reconciliation.md
 └── QiEOS/
-    └── _folder.md
+    └── _QiEOS.md
 ```
 

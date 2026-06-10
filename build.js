@@ -9,7 +9,7 @@ const excluded = new Set(['.git', '.github', 'node_modules']);
 const required = [
   '_..md',
   '01_QiDNA/_01_QiDNA.md',
-  '20_QiSystem/2026-06-08_qilife_governance_audit.md',
+  '20_QiSystem/50_Generated_Reports/2026-06-08_qilife_governance_audit.md',
   '60_QiApp_QiLife/_60_QiApp_QiLife.md'
 ];
 
