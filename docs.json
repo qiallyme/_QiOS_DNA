@@ -2,24 +2,35 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "QiOS DNA",
-  "colors": {
-    "primary": "#7C3AED"
-  },
+  "colors": { "primary": "#7C3AED" },
   "navigation": {
     "groups": [
       {
-        "group": "System Mirror",
+        "group": "Start Here",
         "pages": [
-          "01_QiDNA/_folder",
-          "01_QiDNA/QiEOS/_folder",
-          "10_QiAccess/_folder",
-          "20_QiSystem/_folder",
-          "30_QiServer/_folder",
-          "40_QiCapture/_folder",
-          "50_QiNexus/_folder",
-          "60_QiApp_QiLife/_folder",
-          "70_QiConnect/_folder",
-          "site/_folder"
+          "index",
+          "00_QiEOS/system_map/QiOS_Master_Map",
+          "00_QiEOS/doctrine/QiOS_Core_Doctrine",
+          "20_QiSystem/rules/Source_of_Truth_Rules"
+        ]
+      },
+      {
+        "group": "QiSystem",
+        "pages": [
+          "20_QiSystem/manifests/QiOS_DNA_File_Manifest",
+          "20_QiSystem/schemas/QiLife_Data_Spine"
+        ]
+      },
+      {
+        "group": "QiLabs Layers",
+        "pages": [
+          "10_QiOS_Start/QiAccess_Start/index",
+          "30_QiServer/index",
+          "40_QiCapture/index",
+          "50_QiNexus/My_Drive_Model/index",
+          "60_QiApps/QiLife/index",
+          "60_QiApps/QiJourney/index",
+          "70_QiConnect/index"
         ]
       }
     ]
