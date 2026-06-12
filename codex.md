@@ -214,3 +214,57 @@ Audit only. No building.
 ## 🟢 SECTION 2 — RESOLVED / ARCHIVE
 
 (None yet)
+
+
+---
+
+## 🔵 SECTION 3 — CURRENT STATUS AND NEXT ACTIONS
+
+### [STATUS-2026-06-12] QiDNA Navigation and QiLife Repository
+
+**Verified status:**
+
+- QiDNA repository: `/home/qiadmin/qi_workspace/_QiOS_DNA`
+- QiDNA branch: `main`, synchronized with `origin/main`
+- QiDNA documentation site includes:
+  - cascading, collapsible folder-mirror navigation
+  - separate center-screen mind map
+  - document status filters
+  - Markdown and MDX coverage
+- QiDNA navigation update commit: `97aeaf3`
+- QiLife repository is now cloned locally:
+  - path: `/home/qiadmin/qi_workspace/qilife`
+  - remote: `git@github.com:qiallyme/qilife.git`
+  - branch: `main`
+  - verified clone commit at time of checkout: `c589e1e`
+- The prior schema-source report remains evidence of the earlier missing checkout:
+  - `01_QiDNA/Reconciliation/2026-06-10_qilife_schema_source_report.md`
+- The missing-repository blocker is resolved.
+- The actual QiLife implementation schema has not yet been audited after the clone.
+
+### Next Actions — Do Later, In Order
+
+1. Read the QiLife repository control files and README before scanning implementation.
+2. Check QiLife Git status and current commit.
+3. Perform a targeted schema-source audit inside `/home/qiadmin/qi_workspace/qilife`:
+   - SQLite database files
+   - SQL migrations
+   - ORM models
+   - database initialization code
+   - API data models
+4. Update the QiLife schema source report with verified implementation paths and schema types.
+5. Map actual tables, columns, keys, indexes, and constraints to:
+   - ADR-0017
+   - `20_QiSystem/schemas/QiLife_Data_Spine.mdx`
+   - the database blueprint gap report
+6. Produce discrepancy recommendations using only ADD, MERGE, UPDATE, or DELETE.
+7. Request approval for v1 entities, statuses, and relationships.
+8. Only after schema approval, build the UI route, screen, workflow, and entity-mapping blueprint.
+9. Do not create migrations, alter database code, connect Supabase, or continue broad UI/API implementation until the schema audit and approvals are complete.
+
+### Stop Conditions
+
+- Do not infer schema from documentation when implementation evidence exists.
+- Do not modify the QiLife database during the audit.
+- Do not treat Supabase as current authority unless a newer accepted ADR changes ADR-0017.
+- Stop if credentials, private runtime paths, or owner decisions are required.
