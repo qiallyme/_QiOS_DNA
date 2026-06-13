@@ -88,24 +88,24 @@ Agents must:
 - treat external or reconciled notes as non-authoritative until checked against the active blueprint
 - escalate when ownership, route, or truth status is unclear
 
-## Phase 0 � Freeze and protect (QiNexus)
+## Phase 0 - Freeze and protect (QiNexus)
 
 Goal: prevent accidental loss during reorganization.
 
 **Mandatory Rules:**
+
 - Do not delete anything.
 - Do not let an AI move files directly.
-- Create and use the \130_system/qinexus_cleanup\ folder.
+- Create and use the `130_system/qinexus_cleanup/` folder.
 - Generate manifests and reports before any moves.
 
 ### Cleanup System Structure
-Located at \G:\My Drive\QiNexus\130_system\qinexus_cleanup\:
-- \
-ules/\: Governance and movement criteria.
-- \
-eports/\: Audit results and analysis.
-- \manifests/\: Snapshots of directory state.
-- \quarantine/\: Staging for disputed or risky items.
-- \scripts/\: Automation for audit and verification.
-- \pproved_moves/\: Verified move instructions for human execution.
 
+Located at `G:\My Drive\QiNexus\130_system\qinexus_cleanup\`:
+
+- `rules/`: Governance and movement criteria
+- `reports/`: Audit results and analysis
+- `manifests/`: Snapshots of directory state
+- `quarantine/`: Staging for disputed or risky items
+- `scripts/`: Automation for audit and verification
+- `approved_moves/`: Verified move instructions for human execution

@@ -12,6 +12,10 @@ const qieosMirrorDirectories = new Set([
   'workers', 'workflows'
 ]);
 const duplicateFilePattern = /\s\(\d+\)\.(mdx?|json|bat|mmd)$/i;
+const explicitlySkippedFiles = new Set(['index.md']);
+const explicitlySkippedFilePatterns = [
+  /^_markmind_export(?:_with_content)?\.md$/i
+];
 const required = [
   'README.md',
   '00_QiEOS/_index.md',
@@ -42,11 +46,14 @@ function shouldSkipDirectory(fullPath, entryName) {
   if (excluded.has(entryName) || entryName.startsWith('.')) return true;
   const relativePath = posix(path.relative(root, fullPath));
   const parts = relativePath.split('/');
+  if (parts.includes('90_superseded_sources') || parts.includes('legacy_quarantine')) return true;
   return parts[0] === '00_QiEOS' && qieosMirrorDirectories.has(parts[1]);
 }
 
 function shouldSkipFile(fileName) {
-  return duplicateFilePattern.test(fileName);
+  return duplicateFilePattern.test(fileName) ||
+    explicitlySkippedFiles.has(fileName) ||
+    explicitlySkippedFilePatterns.some((pattern) => pattern.test(fileName));
 }
 
 function discover(dir, files = []) {

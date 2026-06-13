@@ -144,3 +144,4 @@ vite.config.ts.timestamp-*
 
 # Generated structure reports containing secrets
 *qilabs_structure_check*
+.aider*
