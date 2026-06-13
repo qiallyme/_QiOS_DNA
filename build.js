@@ -3,15 +3,20 @@ const path = require('path');
 const { marked } = require('marked');
 
 const root = __dirname;
-const outputDir = path.join(root, 'site');
-const outputFile = path.join(outputDir, 'index.html');
+const siteDir = path.join(root, '60_QiApps', 'site');
+const outputFile = path.join(siteDir, 'index.html');
 const excluded = new Set(['.git', '.github', 'node_modules']);
+const qieosMirrorDirectories = new Set([
+  'ai', 'apis', 'apps', 'assets', 'decisions', 'kb', 'operations', 'principles',
+  'productivity', 'registry', 'rules', 'standards', 'structure', 'tools',
+  'workers', 'workflows'
+]);
+const duplicateFilePattern = /\s\(\d+\)\.(mdx?|json|bat|mmd)$/i;
 const required = [
-  '_..md',
-  '01_QiDNA/_01_QiDNA.md',
-  '01_QiDNA/Architecture/Decisions/ADR-0017_canonical_vocabulary_and_v1_direction.md',
-  '20_QiSystem/schemas/QiLife_Data_Spine.mdx',
-  '60_QiApp_QiLife/_60_QiApp_QiLife.md'
+  'README.md',
+  '00_QiEOS/_index.md',
+  '00_QiEOS/QiOS_Core_Doctrine.mdx',
+  '60_QiApps/site/_site.md'
 ];
 const statuses = ['Active', 'Legacy', 'Proposed', 'Generated', 'Evidence'];
 
@@ -19,14 +24,39 @@ function posix(value) {
   return value.split(path.sep).join('/');
 }
 
+function readText(file) {
+  const buffer = fs.readFileSync(file);
+  if (buffer.length >= 2) {
+    if (buffer[0] === 0xff && buffer[1] === 0xfe) {
+      return buffer.slice(2).toString('utf16le').replace(/^\uFEFF/, '');
+    }
+    if (buffer[0] === 0xfe && buffer[1] === 0xff) {
+      return Buffer.from(buffer.slice(2)).swap16().toString('utf16le').replace(/^\uFEFF/, '');
+    }
+  }
+  const text = buffer.toString('utf8').replace(/^\uFEFF/, '');
+  return text.includes('\u0000') ? buffer.toString('utf16le').replace(/^\uFEFF/, '') : text;
+}
+
+function shouldSkipDirectory(fullPath, entryName) {
+  if (excluded.has(entryName) || entryName.startsWith('.')) return true;
+  const relativePath = posix(path.relative(root, fullPath));
+  const parts = relativePath.split('/');
+  return parts[0] === '00_QiEOS' && qieosMirrorDirectories.has(parts[1]);
+}
+
+function shouldSkipFile(fileName) {
+  return duplicateFilePattern.test(fileName);
+}
+
 function discover(dir, files = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
     .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory() && !excluded.has(entry.name) && !entry.name.startsWith('.')) {
+    if (entry.isDirectory() && !shouldSkipDirectory(fullPath, entry.name)) {
       discover(fullPath, files);
-    } else if (entry.isFile() && /\.mdx?$/i.test(entry.name)) {
+    } else if (entry.isFile() && /\.mdx?$/i.test(entry.name) && !shouldSkipFile(entry.name)) {
       files.push(fullPath);
     }
   }
@@ -44,20 +74,29 @@ function slug(value) {
 }
 
 function documentStatus(relativePath) {
-  if (relativePath.startsWith('00_QiEOS/exports/')) return 'Generated';
-  if (relativePath.startsWith('00_QiEOS/reconciliation/')) return 'Evidence';
-  if (relativePath === 'README.md' || relativePath.startsWith('00_QiEOS/') || relativePath.startsWith('10_QiOS_Start/') ||
-      relativePath.startsWith('60_QiApps/') || relativePath.startsWith('20_qinexus/') ||
-      relativePath.startsWith('30_qiarchive/') || relativePath.startsWith('50_qiserver/') ||
-      relativePath.startsWith('60_qiapps/') || relativePath.startsWith('70_qiconnect/')) return 'Legacy';
-  if (relativePath.startsWith('20_QiSystem/50_Generated_Reports/') ||
-      relativePath.startsWith('20_QiSystem/manifests/')) return 'Generated';
-  if (relativePath.startsWith('01_QiDNA/Reconciliation/') && !relativePath.endsWith('_Reconciliation.md')) return 'Evidence';
-  if (relativePath.startsWith('50_modules/') || relativePath.startsWith('60_ai_layer/') ||
-      relativePath.startsWith('70_deployment/') || relativePath.startsWith('80_prompts/')) return 'Proposed';
-  if (relativePath.startsWith('90_decisions/') || relativePath.startsWith('99_project_receipts/') ||
-      relativePath === 'ADR-0011_homepage_powered_qiaccess.md' || relativePath === 'README 2.md' ||
-      relativePath === 'codex.md' || relativePath === 'qilinks_bookmark_admin_plan.md') return 'Evidence';
+  if (relativePath.startsWith('00_QiEOS/exports/') ||
+      relativePath.startsWith('20_QiSystem/50_Generated_Reports/') ||
+      relativePath.startsWith('20_QiSystem/60_generated_indexes/')) return 'Generated';
+  if (relativePath.startsWith('Reconciliation/') ||
+      relativePath.startsWith('00_QiEOS/reconciliation/') ||
+      relativePath.startsWith('00_QiEOS/receipts/') ||
+      relativePath.startsWith('20_QiSystem/10_logs/') ||
+      relativePath.startsWith('20_QiSystem/20_audits/') ||
+      relativePath.startsWith('20_QiSystem/30_backups/') ||
+      relativePath.startsWith('20_QiSystem/40_health_checks/') ||
+      relativePath.startsWith('20_QiSystem/70_maintenance/') ||
+      relativePath === 'Current_Project_State.md' ||
+      relativePath === 'ADR-0011_homepage_powered_qiaccess.md' ||
+      relativePath === 'codex.md' ||
+      relativePath === 'qilinks_bookmark_admin_plan.md') return 'Evidence';
+  if (relativePath.includes('/90_superseded_sources/') ||
+      relativePath.includes('legacy_quarantine') ||
+      relativePath.endsWith('README_DROP_THIS_IN.md')) return 'Legacy';
+  if (relativePath.startsWith('00_QiEOS/30_data/') ||
+      relativePath.startsWith('00_QiEOS/40_service_apps/') ||
+      relativePath.startsWith('00_QiEOS/50_operations/') ||
+      relativePath.startsWith('00_QiEOS/60_knowledge/') ||
+      relativePath.startsWith('00_QiEOS/70_assets/')) return 'Active';
   return 'Active';
 }
 
@@ -67,7 +106,7 @@ function stripFrontmatter(markdown) {
 
 function makeDocument(file) {
   const relativePath = posix(path.relative(root, file));
-  const markdown = stripFrontmatter(fs.readFileSync(file, 'utf8'));
+  const markdown = stripFrontmatter(readText(file));
   const heading = markdown.match(/^#\s+(.+)$/m);
   const fallback = path.basename(file).replace(/\.mdx?$/i, '').replace(/^_+/, '').replace(/_/g, ' ');
   const directory = path.posix.dirname(relativePath);
@@ -124,8 +163,13 @@ function renderTreeNode(node, depth = 0) {
 }
 
 function render(documents) {
-  const styles = fs.readFileSync(path.join(outputDir, 'style.css'), 'utf8');
-  const clientScript = fs.readFileSync(path.join(outputDir, 'script.js'), 'utf8');
+  const styles = fs.readFileSync(path.join(siteDir, 'style.css'), 'utf8');
+  const clientScript = fs.readFileSync(path.join(siteDir, 'script.js'), 'utf8')
+    .replace("searchIcon.textContent = 'âŒ•';", "searchIcon.textContent = 'S';")
+    .replace("help.innerHTML = '<kbd>Ctrl</kbd><kbd>K</kbd> search <span>Â·</span> <kbd>Esc</kbd> clear';", "help.innerHTML = '<kbd>Ctrl</kbd><kbd>K</kbd> search <span>|</span> <kbd>Esc</kbd> clear';")
+    .replace("themeButton.textContent = theme === 'dark' ? 'â˜¾' : 'â˜€';", "themeButton.textContent = theme === 'dark' ? 'DK' : 'LT';")
+    .replaceAll("â€¦", "...")
+    .replace("status.textContent = currentResults.length + ' result' + (currentResults.length === 1 ? '' : 's') + ' for â€œ' + query + 'â€';", "status.textContent = currentResults.length + ' result' + (currentResults.length === 1 ? '' : 's') + ' for \"' + query + '\"';");
   const tree = buildTree(documents);
   const counts = Object.fromEntries(statuses.map((status) => [
     status, documents.filter((doc) => doc.status === status).length
@@ -186,6 +230,6 @@ const html = render(documents);
 for (const doc of documents) {
   if (!html.includes(`id="${doc.id}"`)) throw new Error(`Generated output missing ${doc.path}`);
 }
-fs.mkdirSync(outputDir, { recursive: true });
+fs.mkdirSync(siteDir, { recursive: true });
 fs.writeFileSync(outputFile, html.replace(/[ \t]+$/gm, ""));
 console.log(`Built ${documents.length} documents into ${posix(path.relative(root, outputFile))}.`);

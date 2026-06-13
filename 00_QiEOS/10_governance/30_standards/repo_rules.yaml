@@ -9,7 +9,7 @@ rules:
 
   - id: RR-003
     name: Canonical Repo Topology
-    description: Repos must follow the canonical topology. Approved root directories are 00_QiEOS, 10_QiOS_Start, 20_QiSystem, 30_QiServer, 40_QiCapture, 50_QiNexus, 60_QiApps, 70_QiConnect, packages, scripts, toolbox, and _QUARANTINE_.
+    description: Repos must follow the canonical topology. Approved root directories are /apps, /sites, /python/qiarchive, /workers, /packages, /infra, and /data.
 
   - id: RR-004
     name: No Undocumented Root Directories
