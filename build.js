@@ -5,16 +5,11 @@ const { marked } = require('marked');
 const root = __dirname;
 const siteDir = path.join(root, '60_QiApps', 'site');
 const outputFile = path.join(siteDir, 'index.html');
-const excluded = new Set(['.git', '.github', 'node_modules']);
-const qieosMirrorDirectories = new Set([
-  'ai', 'apis', 'apps', 'assets', 'decisions', 'kb', 'operations', 'principles',
-  'productivity', 'registry', 'rules', 'standards', 'structure', 'tools',
-  'workers', 'workflows'
-]);
+const excluded = new Set(['.git', '.github', 'node_modules', '_staging_write_test']);
 const duplicateFilePattern = /\s\(\d+\)\.(mdx?|json|bat|mmd)$/i;
-const explicitlySkippedFiles = new Set(['index.md']);
 const explicitlySkippedFilePatterns = [
-  /^_markmind_export(?:_with_content)?\.md$/i
+  /^_markmind_export(?:_with_content)?\.md$/i,
+  /^\.aider\./i
 ];
 const required = [
   'README.md',
@@ -43,16 +38,11 @@ function readText(file) {
 }
 
 function shouldSkipDirectory(fullPath, entryName) {
-  if (excluded.has(entryName) || entryName.startsWith('.')) return true;
-  const relativePath = posix(path.relative(root, fullPath));
-  const parts = relativePath.split('/');
-  if (parts.includes('90_superseded_sources') || parts.includes('legacy_quarantine')) return true;
-  return parts[0] === '00_QiEOS' && qieosMirrorDirectories.has(parts[1]);
+  return excluded.has(entryName) || entryName.startsWith('.');
 }
 
 function shouldSkipFile(fileName) {
   return duplicateFilePattern.test(fileName) ||
-    explicitlySkippedFiles.has(fileName) ||
     explicitlySkippedFilePatterns.some((pattern) => pattern.test(fileName));
 }
 
@@ -81,29 +71,22 @@ function slug(value) {
 }
 
 function documentStatus(relativePath) {
-  if (relativePath.startsWith('00_QiEOS/exports/') ||
-      relativePath.startsWith('20_QiSystem/50_Generated_Reports/') ||
-      relativePath.startsWith('20_QiSystem/60_generated_indexes/')) return 'Generated';
-  if (relativePath.startsWith('Reconciliation/') ||
-      relativePath.startsWith('00_QiEOS/reconciliation/') ||
-      relativePath.startsWith('00_QiEOS/receipts/') ||
-      relativePath.startsWith('20_QiSystem/10_logs/') ||
-      relativePath.startsWith('20_QiSystem/20_audits/') ||
-      relativePath.startsWith('20_QiSystem/30_backups/') ||
-      relativePath.startsWith('20_QiSystem/40_health_checks/') ||
-      relativePath.startsWith('20_QiSystem/70_maintenance/') ||
-      relativePath === 'Current_Project_State.md' ||
-      relativePath === 'ADR-0011_homepage_powered_qiaccess.md' ||
-      relativePath === 'codex.md' ||
-      relativePath === 'qilinks_bookmark_admin_plan.md') return 'Evidence';
-  if (relativePath.includes('/90_superseded_sources/') ||
-      relativePath.includes('legacy_quarantine') ||
-      relativePath.endsWith('README_DROP_THIS_IN.md')) return 'Legacy';
-  if (relativePath.startsWith('00_QiEOS/30_data/') ||
-      relativePath.startsWith('00_QiEOS/40_service_apps/') ||
-      relativePath.startsWith('00_QiEOS/50_operations/') ||
-      relativePath.startsWith('00_QiEOS/60_knowledge/') ||
-      relativePath.startsWith('00_QiEOS/70_assets/')) return 'Active';
+  const lp = relativePath.toLowerCase();
+
+  // Generated: exported or auto-generated content
+  if (lp.includes('/exports/') || lp.includes('generated_reports') ||
+      lp.includes('generated_indexes')) return 'Generated';
+
+  // Legacy: superseded or quarantined content
+  if (lp.includes('/90_superseded_sources/') || lp.includes('legacy_quarantine') ||
+      lp.endsWith('readme_drop_this_in.md')) return 'Legacy';
+
+  // Evidence: operational records, logs, audits, reconciliation
+  if (lp.includes('/reconciliation/') || lp.includes('/receipts/') ||
+      lp.includes('/logs/') || lp.includes('/audits/') ||
+      lp.includes('/backups/') || lp.includes('/health_checks/') ||
+      lp.includes('/maintenance/')) return 'Evidence';
+
   return 'Active';
 }
 
