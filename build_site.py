@@ -33,8 +33,6 @@ EXCLUDE_CLASSIFICATION = {"private", "sensitive", "confidential"}
 EXCLUDE_FLAGS = ["private", "sensitive", "confidential", "private_theory_flag"]
 
 # Tree safety defaults.
-# This still gives you a usable QiLabs map without dumping junk folders,
-# virtual environments, dependency caches, or obvious secret files into a public site.
 TREE_SKIP_DIRS = {
     ".git",
     ".hg",
@@ -107,13 +105,6 @@ def is_relative_to(child: Path, parent: Path) -> bool:
 
 
 def ensure_safe_build_paths(source_dir: Path, dist_dir: Path) -> None:
-    """
-    Guardrail: this builder treats source content as read-only.
-
-    It only deletes/writes inside dist_dir. It refuses to run if dist is the
-    source folder or nested inside the source folder, because that could delete
-    or publish the source vault by accident.
-    """
     source_dir = normalize_path(source_dir)
     dist_dir = normalize_path(dist_dir)
 
@@ -134,9 +125,6 @@ def ensure_safe_build_paths(source_dir: Path, dist_dir: Path) -> None:
 
 
 def safe_clean_dist(dist_dir: Path) -> None:
-    """
-    Overwrite old dist cleanly, with a sanity check so a bad arg does not nuke a root.
-    """
     dist_dir = normalize_path(dist_dir)
 
     if dist_dir.exists():
@@ -208,23 +196,26 @@ def parse_frontmatter(text: str) -> tuple[dict[str, Any], str]:
     return data, body
 
 
-def should_include(fm: dict[str, Any], allow_active: bool) -> tuple[bool, str]:
+def should_include(fm: dict[str, Any], allow_active: bool = False, strict_publish: bool = False) -> tuple[bool, str]:
     """Return (True, "") if a file should be included in the build.
 
-    Fail-closed publish safety rule:
-      A document MUST satisfy ALL of the following to be included in QiSpark Public:
-      1. status in VALID_STATUSES (publish, published, public, pub) OR (allow_active is True and status == 'active')
-      2. visibility == 'public'
-      3. publish_target contains 'qispark'
-      4. sensitivity == 'public'
-      5. classification == 'public'
-
-      If any required tag is missing or non-public, the document is excluded.
+    Safety Rule:
+      1. Exclude if visibility is 'private', 'internal', 'business_internal', or 'confidential'.
+      2. Exclude if sensitivity is in EXCLUDE_SENSITIVITY.
+      3. Exclude if classification is in EXCLUDE_CLASSIFICATION.
+      4. Exclude if draft is True or publish is False or explicit exclude flags are set.
+      5. If strict_publish is True, require visibility=='public', sensitivity=='public', classification=='public', and 'qispark' in publish_target.
+      6. Otherwise (default vault mode), include all non-restricted documents.
     """
     status = str(fm.get("status") or "").lower().strip()
     visibility = str(fm.get("visibility") or "").lower().strip()
     sensitivity = str(fm.get("sensitivity") or "").lower().strip()
     classification = str(fm.get("classification") or "").lower().strip()
+
+    if fm.get("draft") is True or str(fm.get("draft")).lower() in ("true", "1", "yes"):
+        return False, "Draft document"
+    if fm.get("publish") is False or str(fm.get("publish")).lower() in ("false", "0", "no"):
+        return False, "Publish is disabled"
 
     pt_val = fm.get("publish_target") or ""
     if isinstance(pt_val, list):
@@ -232,33 +223,53 @@ def should_include(fm: dict[str, Any], allow_active: bool) -> tuple[bool, str]:
     else:
         targets = [t.strip() for t in str(pt_val).lower().replace(";", ",").split(",") if t.strip()]
 
-    # Explicit exclusions check first
-    if visibility in ("private", "internal", "business_internal"):
+    # Explicit exclusions check
+    if visibility in ("private", "internal", "business_internal", "confidential"):
         return False, f"Visibility is '{visibility}'"
-    if sensitivity in EXCLUDE_SENSITIVITY or sensitivity != "public":
-        return False, f"Sensitivity '{sensitivity}' is not 'public'"
-    if classification in EXCLUDE_CLASSIFICATION or classification != "public":
-        return False, f"Classification '{classification}' is not 'public'"
+    if sensitivity in EXCLUDE_SENSITIVITY:
+        return False, f"Sensitivity '{sensitivity}' is restricted"
+    if classification in EXCLUDE_CLASSIFICATION:
+        return False, f"Classification '{classification}' is restricted"
     for flag in EXCLUDE_FLAGS:
         val = fm.get(flag)
         if isinstance(val, bool) and val or str(val).lower() in ("yes", "true", "1"):
             return False, f"Explicit flag '{flag}' is enabled"
 
-    # Require visibility to be public
-    if visibility != "public":
-        return False, f"Visibility '{visibility}' is not 'public'"
+    if strict_publish:
+        if visibility != "public":
+            return False, f"Visibility '{visibility}' is not 'public'"
+        if sensitivity != "public":
+            return False, f"Sensitivity '{sensitivity}' is not 'public'"
+        if classification != "public":
+            return False, f"Classification '{classification}' is not 'public'"
+        if "qispark" not in targets:
+            return False, f"Publish target '{pt_val}' does not include 'qispark'"
+        if status not in VALID_STATUSES and not (allow_active and status == "active"):
+            return False, f"Status '{status}' is not a publish status"
 
-    # Require publish_target to include qispark
-    if "qispark" not in targets:
-        return False, f"Publish target '{pt_val}' does not include 'qispark'"
+    return True, ""
 
-    # Require status to be valid publish status (or active if allow_active=True)
-    if status in VALID_STATUSES:
-        return True, ""
-    if allow_active and status == "active":
-        return True, ""
 
-    return False, f"Status '{status}' is not a publish status (expected one of: {', '.join(sorted(VALID_STATUSES))})"
+def process_markdown_alerts(html_text: str) -> str:
+    """Replace GitHub alert callouts with styled HTML alerts."""
+    alert_types = {
+        "NOTE": ("alert-note", "info", "Note"),
+        "TIP": ("alert-tip", "lightbulb", "Tip"),
+        "IMPORTANT": ("alert-important", "alert-circle", "Important"),
+        "WARNING": ("alert-warning", "alert-triangle", "Warning"),
+        "CAUTION": ("alert-caution", "shield-alert", "Caution"),
+    }
+    for tag, (css_class, icon, label) in alert_types.items():
+        pattern = re.compile(rf"<blockquote>\s*<p>\s*\[!{tag}\]\s*", re.IGNORECASE)
+        replacement = f'<blockquote class="markdown-alert {css_class}"><p class="alert-title"><i data-lucide="{icon}"></i> {label}</p><p>'
+        html_text = pattern.sub(replacement, html_text)
+    return html_text
+
+
+def estimate_reading_time(text: str) -> str:
+    words = len(re.findall(r"\w+", text))
+    minutes = max(1, round(words / 200))
+    return f"{minutes} min read"
 
 
 def hex_to_rgb(hex_str: str) -> str:
@@ -400,42 +411,43 @@ HTML_HEADER = """<!DOCTYPE html>
             bottom: -3px;
             left: 50%;
             transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
+            width: 16px;
+            height: 2px;
             background: var(--primary);
-            border-radius: 50%;
+            border-radius: 2px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
         }
 
         .glass-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 18px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .glass-card:hover {
-            border-color: var(--card-hover-border);
-            box-shadow: 0 14px 32px -12px var(--primary-glow);
-            transform: translateY(-3px);
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3.5rem;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2.75rem 1.5rem;
-        }
-
-        @media (max-width: 820px) {
-            .nav-container {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .nav-links {
-                justify-content: flex-start;
-            }
+        .section-subtitle {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 2.5rem 0 1.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
         }
     </style>
 </head>
@@ -467,11 +479,9 @@ HTML_FOOTER = """
             document.querySelectorAll('.nav-link').forEach(link => {
                 const href = link.getAttribute('href');
                 if (!href) return;
-                // Match if the current path ends with the href, or if the href
-                // points to the same resolved URL.
                 try {
                     const resolved = new URL(href, window.location.href).pathname;
-                    if (resolved === currentPath || currentPath === resolved + 'index.html') {
+                    if (resolved === currentPath || currentPath === resolved + 'index.html' || (href.includes('docs/index.html') && currentPath.includes('/docs/'))) {
                         link.classList.add('active');
                         return;
                     }
@@ -485,6 +495,38 @@ HTML_FOOTER = """
         function toggleAllDetails(open) {
             document.querySelectorAll('.doc-tree details').forEach(el => el.open = open);
         }
+
+        function filterSidebar(query) {
+            const q = query.trim().toLowerCase();
+            document.querySelectorAll('.doc-tree .tree-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (!q || text.includes(q)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            if (q) {
+                document.querySelectorAll('.doc-tree details').forEach(el => el.open = true);
+            }
+        }
+
+        // Setup Code Copy Buttons
+        document.querySelectorAll('.markdown-body pre').forEach(pre => {
+            if (pre.querySelector('.copy-code-btn')) return;
+            const btn = document.createElement('button');
+            btn.className = 'copy-code-btn';
+            btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copy';
+            btn.onclick = () => {
+                const code = pre.querySelector('code')?.innerText || pre.innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                    btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copied!';
+                    setTimeout(() => { btn.innerHTML = '<i data-lucide="copy" style="width:12px;height:12px;"></i> Copy'; }, 2000);
+                });
+            };
+            pre.style.position = 'relative';
+            pre.appendChild(btn);
+        });
 
         window.addEventListener('load', setActiveNav);
     </script>
@@ -508,10 +550,8 @@ def make_header(title: str, home_path: str, docs_path: str, tree_path: str, site
 # Landing Page
 # ---------------------------------------------------------------------------
 def render_landing(services: list[dict[str, Any]], docs_root_rel: str, tree_rel: str) -> str:
-    # Filter services by surface == public
     public_services = [svc for svc in services if "public" in svc.get("surface", ["public"])]
 
-    # Group services by category
     service_groups = {}
     for svc in public_services:
         category = svc.get("category", "Other Services") or "Other Services"
@@ -525,10 +565,8 @@ def render_landing(services: list[dict[str, Any]], docs_root_rel: str, tree_rel:
             status = str(svc.get("status", "active")).lower().strip()
             is_dev = status == "development" or not url or url == "#"
 
-            if url == "docs/index.html":
-                url = f"{docs_root_rel}/index.html" if not docs_root_rel.endswith("docs") else f"{docs_root_rel}/index.html"
-                if docs_root_rel == "#":
-                    url = "docs/index.html"
+            if url == "docs/index.html" or svc.get("id") == "qispark_docs":
+                url = docs_root_rel if docs_root_rel != "#" else "docs/index.html"
             elif url == "tree.html":
                 url = tree_rel
 
@@ -589,165 +627,115 @@ def render_landing(services: list[dict[str, Any]], docs_root_rel: str, tree_rel:
             max-width: 600px;
             margin: 0 auto 2.5rem auto;
         }}
-        .enter-qilife-btn {{
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: var(--primary);
-            color: white;
-            padding: 0.85rem 2rem;
-            border-radius: 9999px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
-        }}
-        .enter-qilife-btn:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.23);
-            background: #4f46e5;
-        }}
-        .dashboard-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 1.1rem;
-            margin-top: 1.5rem;
-            margin-bottom: 2.5rem;
-        }}
-
         .service-card {{
-            padding: 1.2rem;
+            padding: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            cursor: pointer;
+            gap: 1.25rem;
             position: relative;
-            overflow: hidden;
         }}
-
-        .service-card::after {{
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--accent);
-            opacity: 0.85;
+        .service-card:hover {{
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }}
-
         .service-icon {{
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
         }}
-
-        .service-icon i {{
-            width: 22px;
-            height: 22px;
-        }}
-
         .service-details h3 {{
+            font-size: 1.15rem;
             color: white;
-            font-size: 1.08rem;
-            font-weight: 650;
-            margin-bottom: 0.2rem;
-        }}
-
-        .service-details p {{
-            color: var(--text-muted);
-            font-size: 0.84rem;
-            line-height: 1.35;
-        }}
-
-        .service-arrow {{
-            margin-left: auto;
-            color: var(--text-muted);
-            transition: transform 0.2s;
-        }}
-
-        .service-card:hover .service-arrow {{
-            transform: translateX(4px);
-            color: white;
-        }}
-
-        .section-subtitle {{
-            font-size: 1.25rem;
-            font-weight: 650;
-            margin-top: 2rem;
-            margin-bottom: 0.95rem;
+            margin-bottom: 0.35rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: white;
         }}
-        
-        .status-badge {{
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.15rem 0.45rem;
-            border-radius: 999px;
-            margin-left: 0.35rem;
-            vertical-align: middle;
-            display: inline-block;
+        .service-details p {{
+            font-size: 0.88rem;
+            color: var(--text-muted);
         }}
-
-        .dev-badge {{
-            background: rgba(236, 72, 153, 0.15);
-            color: #f472b6;
-            border: 1px solid rgba(236, 72, 153, 0.3);
-        }}
-
-        .service-card-disabled:hover {{
-            transform: none !important;
-            border-color: var(--card-border) !important;
-            box-shadow: none !important;
+        .service-arrow {{
+            margin-left: auto;
+            color: var(--text-subtle);
         }}
     </style>
 
     <main class="container">
-        <div class="hero-section">
-            <h1>Welcome to QiSpark</h1>
-            <p>The centralized public gateway for the QiLabs ecosystem.</p>
-            <a href="https://qilife.local" class="enter-qilife-btn">
-                Enter QiLife <i data-lucide="arrow-right"></i>
-            </a>
-        </div>
-        
+        <section class="hero-section">
+            <h1>QiSpark Workspace Command Center</h1>
+            <p>Sanitized public surface for QiLabs systems, documentation, and live services.</p>
+        </section>
         {services_sections_html}
     </main>
     '''
 
 
 # ---------------------------------------------------------------------------
-# Docs pages
+# Docs Layout & Component Styling
 # ---------------------------------------------------------------------------
-def render_docs_layout(sidebar_html: str, content_html: str, fm: dict[str, Any]) -> str:
+def render_docs_layout(
+    sidebar_html: str,
+    content_html: str,
+    fm: dict[str, Any],
+    rel_html_path: str = "",
+    prev_doc: dict[str, Any] | None = None,
+    next_doc: dict[str, Any] | None = None,
+    base_path: str = "/"
+) -> str:
+    # Build Breadcrumbs
+    parts = rel_html_path.replace("\\", "/").split("/")
+    if parts and parts[0] == "docs":
+        parts = parts[1:]
+    
+    crumb_items = ['<a href="' + base_path + 'docs/index.html"><i data-lucide="book-open"></i> Docs</a>']
+    for idx, p in enumerate(parts[:-1]):
+        crumb_name = text_to_title(p)
+        crumb_items.append(f'<span>{html.escape(crumb_name)}</span>')
+    if parts:
+        crumb_items.append(f'<span class="active">{html.escape(text_to_title(parts[-1]))}</span>')
+    
+    breadcrumbs_html = f'<div class="doc-breadcrumbs">{" / ".join(crumb_items)}</div>'
+
+    # Build Metadata Header
     metadata_html = ""
-    if fm:
-        meta_items = [
-            ("Status", fm.get("status"), "tag"),
-            ("Sensitivity", fm.get("sensitivity"), "shield"),
-            ("Classification", fm.get("classification"), "file-text"),
-            ("Updated At", fm.get("updated_at"), "calendar"),
-            ("Author", fm.get("author"), "user"),
-            ("Source Type", fm.get("source_type"), "database"),
-        ]
+    meta_blocks = ""
+    
+    if fm.get("author"):
+        meta_blocks += f'<span class="meta-pill"><i data-lucide="user"></i> {html.escape(str(fm["author"]))}</span>'
+    if fm.get("status"):
+        meta_blocks += f'<span class="meta-pill status-pill"><i data-lucide="tag"></i> {html.escape(str(fm["status"]))}</span>'
+    if fm.get("updated_at") or fm.get("date"):
+        dt_val = str(fm.get("updated_at") or fm.get("date"))
+        meta_blocks += f'<span class="meta-pill"><i data-lucide="calendar"></i> {html.escape(dt_val)}</span>'
 
-        meta_blocks = ""
-        for label, val, icon in meta_items:
-            if val:
-                meta_blocks += f"""
-                <div class="meta-block">
-                    <span class="meta-label"><i data-lucide="{icon}"></i> {html.escape(label)}</span>
-                    <span class="meta-value">{html.escape(str(val))}</span>
-                </div>
-                """
+    # Estimate reading time
+    read_time = estimate_reading_time(content_html)
+    meta_blocks += f'<span class="meta-pill time-pill"><i data-lucide="clock"></i> {read_time}</span>'
 
-        if meta_blocks:
-            metadata_html = f'<div class="doc-metadata">{meta_blocks}</div>'
+    if meta_blocks:
+        metadata_html = f'<div class="doc-meta-bar">{meta_blocks}</div>'
+
+    # Pagination controls
+    pagination_html = ""
+    prev_html = ""
+    next_html = ""
+    if prev_doc:
+        prev_url = html.escape(base_path + prev_doc["rel_html"], quote=True)
+        prev_title = html.escape(prev_doc["nav_title"])
+        prev_html = f'<a href="{prev_url}" class="doc-page-btn prev-btn"><span class="btn-sub">← Previous</span><span class="btn-title">{prev_title}</span></a>'
+    if next_doc:
+        next_url = html.escape(base_path + next_doc["rel_html"], quote=True)
+        next_title = html.escape(next_doc["nav_title"])
+        next_html = f'<a href="{next_url}" class="doc-page-btn next-btn"><span class="btn-sub">Next →</span><span class="btn-title">{next_title}</span></a>'
+
+    if prev_html or next_html:
+        pagination_html = f'<div class="doc-pagination">{prev_html}{next_html}</div>'
 
     return f"""
     <style>
@@ -768,366 +756,327 @@ def render_docs_layout(sidebar_html: str, content_html: str, fm: dict[str, Any])
             height: calc(100vh - 69px);
         }}
 
+        .sidebar-header {{
+            margin-bottom: 1.25rem;
+        }}
+
         .sidebar-title {{
             font-size: 0.78rem;
             font-weight: 760;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }}
 
-        .doc-tree {{
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }}
-
-        .tree-folder {{
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }}
-
-        .tree-folder details {{
+        .sidebar-search-box {{
             width: 100%;
-        }}
-
-        .tree-folder summary {{
-            list-style: none;
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-        }}
-
-        .tree-folder summary::-webkit-details-marker {{
-            display: none;
-        }}
-
-        .folder-header {{
-            font-weight: 650;
-            font-size: 0.92rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
             color: white;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.35rem;
-            margin-bottom: 0.2rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            outline: none;
+            transition: border-color 0.2s;
         }}
-
-        .folder-content {{
-            padding-left: 0.55rem;
-            border-left: 1px dashed rgba(255, 255, 255, 0.08);
-            margin-left: 0.45rem;
-            margin-top: 0.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+        .sidebar-search-box:focus {{
+            border-color: var(--primary);
         }}
 
         .sidebar-controls {{
             display: flex;
             gap: 0.5rem;
-            padding: 0.5rem 0.25rem;
-            border-bottom: 1px solid var(--card-border);
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }}
 
         .sidebar-controls button {{
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--card-border);
             color: var(--text-muted);
-            padding: 0.25rem 0.5rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 6px;
             font-size: 0.75rem;
-            font-family: inherit;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.35rem;
+        }}
+        .sidebar-controls button:hover {{
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
         }}
 
-        .sidebar-controls button:hover {{
-            background: rgba(99, 102, 241, 0.15);
-            border-color: var(--card-hover-border);
+        .doc-tree {{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }}
+
+        .tree-folder summary {{
+            list-style: none;
+            cursor: pointer;
+            padding: 0.38rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }}
+        .tree-folder summary:hover {{
+            background: rgba(255, 255, 255, 0.04);
             color: white;
         }}
 
-        .sidebar-controls button i {{
-            width: 12px;
-            height: 12px;
+        .folder-content {{
+            padding-left: 0.85rem;
+            margin-left: 0.5rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            margin-top: 0.25rem;
         }}
 
         .tree-item {{
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.88rem;
-            padding: 0.28rem 0.55rem;
-            border-left: 1px solid rgba(255, 255, 255, 0.07);
-            margin-left: 0.45rem;
-            border-radius: 0 8px 8px 0;
-            transition: all 0.2s;
+            font-size: 0.85rem;
+            padding: 0.35rem 0.6rem;
+            border-radius: 6px;
             display: block;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            transition: all 0.15s ease;
         }}
-
-        .tree-item:hover, .tree-item.active {{
+        .tree-item:hover {{
             color: white;
-            border-left-color: var(--primary);
-            padding-left: 0.75rem;
-            background: rgba(255, 255, 255, 0.045);
+            background: rgba(255, 255, 255, 0.04);
+        }}
+        .tree-item.active {{
+            color: white;
+            background: var(--primary-glow);
+            border-left: 2px solid var(--primary);
+            font-weight: 600;
         }}
 
         .content-area {{
-            flex-grow: 1;
-            padding: 2.5rem clamp(1.25rem, 5vw, 4rem);
-            max-width: 980px;
-            overflow-y: auto;
+            flex: 1;
+            max-width: 960px;
+            padding: 2.5rem 3rem;
+            margin: 0 auto;
         }}
 
-        .doc-metadata {{
+        .doc-breadcrumbs {{
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-subtle);
+            margin-bottom: 1.25rem;
+        }}
+        .doc-breadcrumbs a {{
+            color: var(--text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }}
+        .doc-breadcrumbs a:hover {{
+            color: white;
+        }}
+        .doc-breadcrumbs .active {{
+            color: var(--primary);
+        }}
+
+        .doc-meta-bar {{
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.5rem;
             margin-bottom: 2rem;
-            padding-bottom: 1.25rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--card-border);
         }}
 
-        .meta-block {{
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }}
-
-        .meta-label {{
-            font-size: 0.72rem;
-            font-weight: 650;
-            text-transform: uppercase;
+        .meta-pill {{
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.35rem;
         }}
 
-        .meta-label i {{
-            width: 12px;
-            height: 12px;
-        }}
-
-        .meta-value {{
-            font-size: 0.9rem;
-            color: white;
-            font-weight: 520;
-        }}
-
         .markdown-body {{
-            font-size: 1rem;
-        }}
-
-        .markdown-body h1 {{
-            font-size: clamp(2rem, 5vw, 2.65rem);
-            font-weight: 820;
-            letter-spacing: -1px;
-            margin-bottom: 1.35rem;
-            color: white;
-            line-height: 1.1;
-        }}
-
-        .markdown-body h2 {{
-            font-size: 1.55rem;
-            font-weight: 740;
-            letter-spacing: -0.4px;
-            margin-top: 2rem;
-            margin-bottom: 0.85rem;
-            color: white;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-            padding-bottom: 0.45rem;
-        }}
-
-        .markdown-body h3 {{
-            font-size: 1.2rem;
-            font-weight: 650;
-            margin-top: 1.35rem;
-            margin-bottom: 0.65rem;
-            color: white;
-        }}
-
-        .markdown-body p {{
-            margin-bottom: 1.15rem;
+            font-size: 1.05rem;
             color: #cbd5e1;
         }}
 
-        .markdown-body ul, .markdown-body ol {{
-            margin-bottom: 1.15rem;
-            padding-left: 1.5rem;
-            color: #cbd5e1;
-        }}
-
-        .markdown-body li {{
-            margin-bottom: 0.35rem;
-        }}
-
-        .markdown-body code {{
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 0.15rem 0.35rem;
-            border-radius: 6px;
-            font-size: 0.9em;
-            color: #fb7185;
-        }}
-
-        .markdown-body pre {{
-            background: #0f1115;
+        .markdown-body h1 {{ font-size: 2.2rem; margin-bottom: 1.5rem; color: white; letter-spacing: -0.5px; }}
+        .markdown-body h2 {{ font-size: 1.5rem; margin: 2rem 0 1rem 0; color: white; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem; }}
+        .markdown-body h3 {{ font-size: 1.25rem; margin: 1.5rem 0 0.75rem 0; color: #f1f5f9; }}
+        .markdown-body p {{ margin-bottom: 1.25rem; }}
+        .markdown-body ul, .markdown-body ol {{ margin-bottom: 1.25rem; padding-left: 1.5rem; }}
+        .markdown-body li {{ margin-bottom: 0.4rem; }}
+        .markdown-body code {{ background: rgba(255, 255, 255, 0.08); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; font-family: monospace; color: #a5b4fc; }}
+        .markdown-body pre {{ background: #0b0d17; border: 1px solid var(--card-border); padding: 1.25rem; border-radius: 12px; overflow-x: auto; margin-bottom: 1.5rem; position: relative; }}
+        .markdown-body pre code {{ background: none; padding: 0; color: #e2e8f0; }}
+        
+        .copy-code-btn {{
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--card-border);
-            padding: 1.1rem;
-            border-radius: 14px;
-            overflow-x: auto;
-            margin-bottom: 1.35rem;
-        }}
-
-        .markdown-body pre code {{
-            background: none;
-            padding: 0;
-            color: #e2e8f0;
-            font-size: 0.9rem;
-        }}
-
-        .markdown-body a {{
-            color: #a5b4fc;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-        }}
-
-        .markdown-body a:hover {{
-            border-bottom-color: #a5b4fc;
-        }}
-
-        .markdown-body blockquote {{
-            border-left: 4px solid var(--primary);
-            padding-left: 1.1rem;
             color: var(--text-muted);
-            font-style: italic;
-            margin-bottom: 1.35rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: background 0.2s;
         }}
+        .copy-code-btn:hover {{ background: rgba(255, 255, 255, 0.15); color: white; }}
 
-        .markdown-body table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.25rem 0;
-            overflow: hidden;
-            border-radius: 12px;
+        .markdown-alert {{
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+            background: rgba(99, 102, 241, 0.08);
         }}
+        .alert-title {{ font-weight: 700; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem; font-size: 0.95rem; }}
+        .alert-note {{ border-color: #3b82f6; background: rgba(59, 130, 246, 0.08); }}
+        .alert-tip {{ border-color: #10b981; background: rgba(16, 185, 129, 0.08); }}
+        .alert-important {{ border-color: #a855f7; background: rgba(168, 85, 247, 0.08); }}
+        .alert-warning {{ border-color: #f59e0b; background: rgba(245, 158, 11, 0.08); }}
+        .alert-caution {{ border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }}
 
-        .markdown-body th, .markdown-body td {{
+        .doc-pagination {{
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }}
+        .doc-page-btn {{
+            text-decoration: none;
+            background: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 0.65rem 0.75rem;
-            vertical-align: top;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: all 0.2s;
+            max-width: 48%;
         }}
-
-        .markdown-body th {{
-            color: white;
-            background: rgba(255, 255, 255, 0.045);
-            text-align: left;
+        .doc-page-btn:hover {{
+            border-color: var(--primary);
+            transform: translateY(-2px);
         }}
+        .doc-page-btn.next-btn {{ margin-left: auto; text-align: right; }}
+        .btn-sub {{ font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }}
+        .btn-title {{ font-size: 0.98rem; color: white; font-weight: 600; }}
 
         @media (max-width: 900px) {{
-            .docs-layout {{
-                display: block;
-            }}
-
-            .sidebar {{
-                width: 100%;
-                height: auto;
-                position: static;
-                border-right: none;
-                border-bottom: 1px solid var(--card-border);
-            }}
+            .docs-layout {{ display: block; }}
+            .sidebar {{ width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--card-border); }}
+            .content-area {{ padding: 1.5rem; }}
         }}
     </style>
+
     <main class="docs-layout">
         <aside class="sidebar">
-            <div class="sidebar-title"><i data-lucide="book-open" style="width: 16px; height: 16px;"></i> Document Tree</div>
-            <div class="sidebar-controls">
-                <button onclick="toggleAllDetails(true)"><i data-lucide="folder-open"></i> Expand All</button>
-                <button onclick="toggleAllDetails(false)"><i data-lucide="folder-closed"></i> Collapse All</button>
+            <div class="sidebar-header">
+                <div class="sidebar-title"><i data-lucide="book-open" style="width: 16px; height: 16px;"></i> Document Tree</div>
+                <input type="text" class="sidebar-search-box" placeholder="Filter docs..." oninput="filterSidebar(this.value)" />
+                <div class="sidebar-controls">
+                    <button onclick="toggleAllDetails(true)"><i data-lucide="folder-open"></i> Expand All</button>
+                    <button onclick="toggleAllDetails(false)"><i data-lucide="folder-closed"></i> Collapse All</button>
+                </div>
             </div>
             <nav class="doc-tree">
                 {sidebar_html}
             </nav>
         </aside>
+
         <section class="content-area">
+            {breadcrumbs_html}
             {metadata_html}
             <div class="markdown-body">
                 {content_html}
             </div>
+            {pagination_html}
         </section>
     </main>
     """
 
 
+# ---------------------------------------------------------------------------
+# Sidebar Tree Builder
+# ---------------------------------------------------------------------------
 def build_sidebar(docs_list: list[dict[str, Any]], current_rel_path: str | None = None, base_path: str = "/") -> str:
-    # Filter out nav_hidden: True files
     visible_docs = [doc for doc in docs_list if not doc.get("nav_hidden", False)]
-
-    # Use absolute base_path prefix for all sidebar links
     link_prefix = base_path
 
-    # Build a nested tree structure
-    root_node = {"files": [], "dirs": {}}
+    root_node: dict[str, Any] = {"files": [], "dirs": {}}
 
     for doc in visible_docs:
-        rel_html = doc["rel_html"]  # e.g., "docs/30_empowerqnow713/manifesto.html"
-        
-        # Strip "docs/" prefix if present to find nested folder structure
+        rel_html = doc["rel_html"]
         path_str = rel_html
         if path_str.startswith("docs/"):
             path_str = path_str[5:]
         elif path_str.startswith("docs\\"):
             path_str = path_str[5:]
-            
+
         parts = path_str.replace("\\", "/").split("/")
         dir_parts = parts[:-1]
-        
+
         current_node = root_node
         for part in dir_parts:
             if not part:
                 continue
             current_node = current_node["dirs"].setdefault(part, {"files": [], "dirs": {}})
-            
+
         current_node["files"].append(doc)
 
     def render_node(node: dict[str, Any], current_path: str | None, prefix: str) -> str:
         html_out = ""
-        
-        # Render directories first
+
         for dir_key in sorted(node["dirs"].keys()):
             child = node["dirs"][dir_key]
-            
             display_name = dir_key
             if display_name.isdigit() or (len(display_name) > 2 and display_name[:2].isdigit()):
                 display_name = re.sub(r"^\d+_", "", display_name)
             display_name = display_name.replace("_", " ").title()
-            
+
             child_html = render_node(child, current_path, prefix)
             if not child_html.strip():
                 continue
-                
+
             is_open = False
             if current_path:
                 norm_path = current_path.replace("\\", "/")
                 path_parts = norm_path.split("/")[:-1]
                 if dir_key in path_parts:
                     is_open = True
-                    
+
             open_attr = " open" if is_open else ""
-            
+
             html_out += f"""
             <div class="tree-folder">
                 <details{open_attr}>
@@ -1141,8 +1090,7 @@ def build_sidebar(docs_list: list[dict[str, Any]], current_rel_path: str | None 
                 </details>
             </div>
             """
-            
-        # Render files
+
         sorted_files = sorted(
             node["files"],
             key=lambda x: (x.get("nav_order", 999), str(x.get("nav_title") or "").lower())
@@ -1155,13 +1103,174 @@ def build_sidebar(docs_list: list[dict[str, Any]], current_rel_path: str | None 
                 {html.escape(f['nav_title'])}
             </a>
             """
-            
+
         return html_out
 
     return render_node(root_node, current_rel_path, link_prefix)
 
 
-def convert_md_files(source_dir: Path, dist_dir: Path, allow_active: bool) -> tuple[list[dict[str, Any]], dict[str, int]]:
+# ---------------------------------------------------------------------------
+# Documentation Index Portal
+# ---------------------------------------------------------------------------
+def render_docs_index(docs_list: list[dict[str, Any]], sidebar_html: str, base_path: str = "/", site_title: str = "QiSpark") -> str:
+    categories = {}
+    for doc in docs_list:
+        folder = doc.get("folder", "General Documentation")
+        categories.setdefault(folder, []).append(doc)
+
+    cat_cards_html = ""
+    for cat_name, cat_docs in sorted(categories.items()):
+        doc_links = ""
+        for d in cat_docs[:5]:
+            d_title = html.escape(d["nav_title"])
+            d_url = html.escape(base_path + d["rel_html"], quote=True)
+            doc_links += f'<li><a href="{d_url}"><i data-lucide="file-text" style="width:14px;height:14px;"></i> {d_title}</a></li>'
+
+        more_count = len(cat_docs) - 5
+        more_badge = f'<p class="cat-more">+{more_count} more documents</p>' if more_count > 0 else ""
+
+        cat_cards_html += f"""
+        <div class="glass-card doc-cat-card">
+            <div class="cat-header">
+                <h3><i data-lucide="folder-git2" style="color: var(--primary);"></i> {html.escape(cat_name)}</h3>
+                <span class="cat-count">{len(cat_docs)} docs</span>
+            </div>
+            <ul class="cat-doc-list">
+                {doc_links}
+            </ul>
+            {more_badge}
+        </div>
+        """
+
+    index_body_html = f"""
+    <style>
+        .docs-portal-hero {{
+            margin-bottom: 2.5rem;
+        }}
+        .docs-portal-hero h1 {{
+            font-size: 2.4rem;
+            color: white;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.5px;
+        }}
+        .docs-portal-hero p {{
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }}
+
+        .portal-stats-bar {{
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }}
+        .portal-stat-pill {{
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            padding: 0.6rem 1.25rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+        }}
+        .portal-stat-pill strong {{ color: white; font-size: 1.1rem; }}
+
+        .doc-cat-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }}
+
+        .doc-cat-card {{
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }}
+        .cat-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--card-border);
+        }}
+        .cat-header h3 {{
+            font-size: 1.1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }}
+        .cat-count {{
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }}
+        .cat-doc-list {{
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }}
+        .cat-doc-list a {{
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: color 0.15s;
+        }}
+        .cat-doc-list a:hover {{
+            color: var(--primary);
+        }}
+        .cat-more {{
+            margin-top: auto;
+            padding-top: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--text-subtle);
+            font-style: italic;
+        }}
+    </style>
+
+    <section class="docs-portal-hero">
+        <h1>{html.escape(site_title)} Documentation Portal</h1>
+        <p>Explore technical documentation, system specifications, standard operating procedures, and architectural blueprints.</p>
+        <div class="portal-stats-bar">
+            <div class="portal-stat-pill"><i data-lucide="book-open" style="color: var(--primary);"></i> Published Docs: <strong>{len(docs_list)}</strong></div>
+            <div class="portal-stat-pill"><i data-lucide="folder" style="color: var(--accent-purple);"></i> Categories: <strong>{len(categories)}</strong></div>
+        </div>
+    </section>
+
+    <h2 class="section-subtitle"><i data-lucide="layers" style="color: var(--primary);"></i> Documentation Taxonomy</h2>
+    <div class="doc-cat-grid">
+        {cat_cards_html}
+    </div>
+    """
+
+    return render_docs_layout(
+        sidebar_html=sidebar_html,
+        content_html=index_body_html,
+        fm={},
+        rel_html_path="docs/index.html",
+        base_path=base_path
+    )
+
+
+# ---------------------------------------------------------------------------
+# Convert Markdown Files
+# ---------------------------------------------------------------------------
+def convert_md_files(
+    source_dir: Path,
+    dist_dir: Path,
+    allow_active: bool = False,
+    strict_publish: bool = False
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
     docs_list: list[dict[str, Any]] = []
     docs_dir = dist_dir / "docs"
 
@@ -1180,7 +1289,6 @@ def convert_md_files(source_dir: Path, dist_dir: Path, allow_active: bool) -> tu
     for root_dir, dirnames, files in os.walk(source_dir):
         root_path = Path(root_dir)
 
-        # Mutate dirnames in-place so os.walk does not recurse into skipped folders.
         dirnames[:] = [
             d for d in dirnames
             if not d.startswith(".") and d != "_qiconfig" and d not in TREE_SKIP_DIRS
@@ -1208,7 +1316,7 @@ def convert_md_files(source_dir: Path, dist_dir: Path, allow_active: bool) -> tu
 
             fm, body_text = parse_frontmatter(content)
 
-            ok, reason = should_include(fm, allow_active)
+            ok, reason = should_include(fm, allow_active, strict_publish)
             if not ok:
                 stats["skipped"] += 1
                 if "Status" in reason:
@@ -1225,11 +1333,13 @@ def convert_md_files(source_dir: Path, dist_dir: Path, allow_active: bool) -> tu
                     stats["status_not_publishable"] += 1
                 continue
 
-            html_body = markdown.markdown(
+            raw_html_body = markdown.markdown(
                 body_text,
                 extensions=["fenced_code", "tables", "nl2br", "toc"],
                 output_format="html5",
             )
+
+            html_body = process_markdown_alerts(raw_html_body)
 
             title = str(fm.get("title") or text_to_title(rel_path.name))
             slug = str(fm.get("slug") or slugify(title))
@@ -1243,9 +1353,8 @@ def convert_md_files(source_dir: Path, dist_dir: Path, allow_active: bool) -> tu
             elif folder_name:
                 folder_name = folder_name.replace("_", " ").title()
             else:
-                folder_name = "Root"
+                folder_name = "General Documentation"
 
-            # Parse navigation fields
             nav_title = fm.get("nav_title") or title
             nav_group = fm.get("nav_group") or folder_name
 
@@ -1298,7 +1407,7 @@ def convert_md_files(source_dir: Path, dist_dir: Path, allow_active: bool) -> tu
 
 
 # ---------------------------------------------------------------------------
-# QiLabs tree page
+# QiLabs Tree Page Helper
 # ---------------------------------------------------------------------------
 def should_skip_tree_path(path: Path, root: Path, include_hidden: bool) -> bool:
     name = path.name
@@ -1320,110 +1429,15 @@ def should_skip_tree_path(path: Path, root: Path, include_hidden: bool) -> bool:
 
 
 def build_doc_source_link_map(docs: list[dict[str, Any]], tree_root: Path) -> dict[str, str]:
-    """
-    Map source markdown files to generated doc links.
-    Values are hrefs from dist/tree.html.
-    """
-    mapping: dict[str, str] = {}
-    tree_root = normalize_path(tree_root)
-
+    link_map: dict[str, str] = {}
     for doc in docs:
         source_path = normalize_path(Path(doc["source_path"]))
         try:
-            key = source_path.relative_to(tree_root).as_posix()
+            rel_key = source_path.relative_to(tree_root).as_posix().lower()
+            link_map[rel_key] = doc["rel_html"]
         except ValueError:
-            continue
-        mapping[key] = doc["rel_html"]
-
-    return mapping
-
-
-def render_tree_node(
-    path: Path,
-    root: Path,
-    doc_link_map: dict[str, str],
-    include_hidden: bool,
-    max_depth: int | None,
-    current_depth: int = 0,
-) -> str:
-    if should_skip_tree_path(path, root, include_hidden):
-        return ""
-
-    try:
-        rel_key = path.relative_to(root).as_posix()
-    except ValueError:
-        rel_key = path.as_posix()
-
-    display_name = path.name if path != root else path.name or str(path)
-    safe_name = html.escape(display_name)
-
-    if max_depth is not None and current_depth > max_depth:
-        return ""
-
-    if path.is_dir():
-        children_html = ""
-        try:
-            children = sorted(
-                path.iterdir(),
-                key=lambda p: (not p.is_dir(), p.name.lower()),
-            )
-        except PermissionError:
-            return f"""
-            <li class="tree-dir blocked">
-                <span class="tree-row"><i data-lucide="lock"></i>{safe_name}</span>
-            </li>
-            """
-        except OSError:
-            return ""
-
-        for child in children:
-            children_html += render_tree_node(
-                child,
-                root,
-                doc_link_map,
-                include_hidden,
-                max_depth,
-                current_depth + 1,
-            )
-
-        count = children_html.count("<li")
-        open_attr = " open" if current_depth <= 1 else ""
-
-        return f"""
-        <li class="tree-dir">
-            <details{open_attr}>
-                <summary class="tree-row">
-                    <i data-lucide="folder"></i>
-                    <span class="node-name">{safe_name}</span>
-                    <span class="node-count">{count}</span>
-                </summary>
-                <ul>{children_html}</ul>
-            </details>
-        </li>
-        """
-
-    icon = "file-text" if path.suffix.lower() == ".md" else "file"
-    file_link = doc_link_map.get(rel_key)
-
-    if file_link:
-        return f"""
-        <li class="tree-file linked">
-            <a class="tree-row" href="{html.escape(file_link, quote=True)}">
-                <i data-lucide="{icon}"></i>
-                <span class="node-name">{safe_name}</span>
-                <span class="node-badge">published</span>
-            </a>
-        </li>
-        """
-
-    return f"""
-    <li class="tree-file">
-        <span class="tree-row">
-            <i data-lucide="{icon}"></i>
-            <span class="node-name">{safe_name}</span>
-        </span>
-    </li>
-    """
+            pass
+    return link_map
 
 
 def render_manifest_node(node: dict[str, Any], docs: list[dict[str, Any]], base_path: str = "/") -> str:
@@ -1518,140 +1532,29 @@ def render_tree_page(
 
     return f"""
     <style>
-        .tree-page {{
-            max-width: 1200px;
-        }}
-
-        .tree-hero {{
-            padding: 1.4rem;
-            margin-bottom: 1.25rem;
-        }}
-
-        .tree-hero h1 {{
-            font-size: clamp(2rem, 5vw, 2.75rem);
-            line-height: 1.05;
-            letter-spacing: -1px;
-            margin-bottom: 0.65rem;
-            color: white;
-        }}
-
-        .tree-hero p {{
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-        }}
-
-        .tree-meta {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }}
-
-        .tree-pill {{
-            border: 1px solid var(--card-border);
-            background: rgba(255, 255, 255, 0.04);
-            color: #cbd5e1;
-            padding: 0.35rem 0.65rem;
-            border-radius: 999px;
-            font-size: 0.82rem;
-        }}
-
-        .tree-panel {{
-            padding: 1rem;
-            overflow-x: auto;
-        }}
-
-        .qilabs-tree,
-        .qilabs-tree ul {{
-            list-style: none;
-        }}
-
-        .qilabs-tree ul {{
-            margin-left: 1.25rem;
-            padding-left: 0.75rem;
-            border-left: 1px solid rgba(255, 255, 255, 0.08);
-        }}
-
-        .qilabs-tree li {{
-            margin: 0.18rem 0;
-        }}
-
-        .tree-row {{
-            color: #cbd5e1;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            min-height: 1.75rem;
-            padding: 0.2rem 0.45rem;
-            border-radius: 999px;
-            transition: background 0.15s, color 0.15s;
-        }}
-
-        .tree-row:hover {{
-            color: white;
-            background: rgba(255, 255, 255, 0.045);
-        }}
-
-        .tree-row i {{
-            width: 16px;
-            height: 16px;
-            color: var(--text-muted);
-        }}
-
-        .tree-dir > details > summary {{
-            cursor: pointer;
-            user-select: none;
-            color: white;
-            font-weight: 550;
-        }}
-
-        .tree-dir > details > summary::-webkit-details-marker {{
-            display: none;
-        }}
-
-        .tree-dir > details > summary::before {{
-            content: "▸";
-            color: var(--text-muted);
-            display: inline-block;
-            width: 0.8rem;
-            transition: transform 0.15s;
-        }}
-
-        .tree-dir > details[open] > summary::before {{
-            transform: rotate(90deg);
-        }}
-
-        .tree-file .tree-row {{
-            font-size: 0.92rem;
-        }}
-
-        .tree-file.linked .tree-row {{
-            color: #a5b4fc;
-        }}
-
-        .node-name {{
-            white-space: nowrap;
-        }}
-
-        .node-count,
-        .node-badge {{
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.055);
-            padding: 0.05rem 0.38rem;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 520;
-        }}
-
-        .node-badge {{
-            color: #c4b5fd;
-        }}
-
-        .tree-note {{
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 1rem;
-        }}
+        .tree-page {{ max-width: 1200px; }}
+        .tree-hero {{ padding: 1.4rem; margin-bottom: 1.25rem; }}
+        .tree-hero h1 {{ font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.05; letter-spacing: -1px; margin-bottom: 0.65rem; color: white; }}
+        .tree-hero p {{ color: var(--text-muted); margin-bottom: 0.75rem; }}
+        .tree-meta {{ display: flex; flex-wrap: wrap; gap: 0.6rem; }}
+        .tree-pill {{ border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.04); color: #cbd5e1; padding: 0.35rem 0.65rem; border-radius: 999px; font-size: 0.82rem; }}
+        .tree-panel {{ padding: 1rem; overflow-x: auto; }}
+        .qilabs-tree, .qilabs-tree ul {{ list-style: none; }}
+        .qilabs-tree ul {{ margin-left: 1.25rem; padding-left: 0.75rem; border-left: 1px solid rgba(255, 255, 255, 0.08); }}
+        .qilabs-tree li {{ margin: 0.18rem 0; }}
+        .tree-row {{ color: #cbd5e1; text-decoration: none; display: inline-flex; align-items: center; gap: 0.45rem; min-height: 1.75rem; padding: 0.2rem 0.45rem; border-radius: 999px; transition: background 0.15s, color 0.15s; }}
+        .tree-row:hover {{ color: white; background: rgba(255, 255, 255, 0.045); }}
+        .tree-row i {{ width: 16px; height: 16px; color: var(--text-muted); }}
+        .tree-dir > details > summary {{ cursor: pointer; user-select: none; color: white; font-weight: 550; }}
+        .tree-dir > details > summary::-webkit-details-marker {{ display: none; }}
+        .tree-dir > details > summary::before {{ content: "▸"; color: var(--text-muted); display: inline-block; width: 0.8rem; transition: transform 0.15s; }}
+        .tree-dir > details[open] > summary::before {{ transform: rotate(90deg); }}
+        .tree-file .tree-row {{ font-size: 0.92rem; }}
+        .tree-file.linked .tree-row {{ color: #a5b4fc; }}
+        .node-name {{ white-space: nowrap; }}
+        .node-count, .node-badge {{ color: var(--text-muted); background: rgba(255, 255, 255, 0.055); padding: 0.05rem 0.38rem; border-radius: 999px; font-size: 0.72rem; font-weight: 520; }}
+        .node-badge {{ color: #c4b5fd; }}
+        .tree-note {{ color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; }}
     </style>
 
     <main class="container tree-page">
@@ -1676,7 +1579,7 @@ def render_tree_page(
 
 
 # ---------------------------------------------------------------------------
-# Main build
+# Main build entry point
 # ---------------------------------------------------------------------------
 def write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1697,14 +1600,9 @@ def main() -> None:
     parser.add_argument("--dist", type=str, default=None, help="Output static site directory")
     parser.add_argument("--tree-root", type=str, default=None, help="Root folder to render into dist/tree.html")
     parser.add_argument("--allow-active", action="store_true", help="Include active status files in documentation build")
+    parser.add_argument("--strict-publish", action="store_true", help="Enforce strict public frontmatter tags (visibility=public, sensitivity=public, classification=public)")
     parser.add_argument("--no-tree", action="store_true", help="Skip generating dist/tree.html")
     parser.add_argument("--include-hidden-tree", action="store_true", help="Include hidden dot folders/files in the tree page")
-    parser.add_argument(
-        "--tree-max-depth",
-        type=int,
-        default=None,
-        help="Maximum tree depth.",
-    )
     parser.add_argument("--config", type=str, default=None, help="Site config JSON path")
     parser.add_argument("--bookmarks-csv", type=str, default=None, help="Bookmarks CSV file path (overrides config)")
     parser.add_argument("--services-json", type=str, default=None, help="Services registry JSON path (overrides config)")
@@ -1713,17 +1611,15 @@ def main() -> None:
         "--base-path",
         type=str,
         default=None,
-        help="URL base path for deployment (e.g. '/' for domain root). "
-             "All internal links become absolute from this root.",
+        help="URL base path for deployment (e.g. '/' for domain root). All internal links become absolute from this root.",
     )
     args = parser.parse_args()
 
-    # Load site configuration
     site_title = "QiSpark"
     source_path = DEFAULT_SOURCE
     dist_path = DEFAULT_DIST
     tree_root_path = DEFAULT_QILABS_ROOT
-    base_path = "/"  # default: site served from domain root
+    base_path = "/"
 
     config_file = Path(args.config) if args.config else (SCRIPT_DIR / "00_config/site.config.json")
     if config_file.exists() and config_file.is_file():
@@ -1738,7 +1634,6 @@ def main() -> None:
         except Exception as e:
             print(f"Error loading site config JSON: {e}")
 
-    # CLI overrides
     if args.site_title:
         site_title = args.site_title
     if args.source:
@@ -1750,7 +1645,6 @@ def main() -> None:
     if args.base_path is not None:
         base_path = args.base_path
 
-    # Normalize base_path: must start and end with '/'
     base_path = base_path.strip()
     if not base_path.startswith("/"):
         base_path = "/" + base_path
@@ -1761,16 +1655,17 @@ def main() -> None:
     dist_dir = normalize_path(dist_path)
     tree_root = normalize_path(tree_root_path)
     allow_active = args.allow_active
+    strict_publish = args.strict_publish
 
     print(f"Building Static Site inside: {dist_dir}")
     print(f"Markdown Source, read-only: {source_dir}")
     print(f"QiLabs Tree Root: {tree_root}")
     print(f"Base Path: {base_path}")
     print(f"Allow active status files: {allow_active}")
+    print(f"Strict publish filter: {strict_publish}")
     print(f"Site Title: {site_title}")
     print("-" * 72)
 
-    # Load publish filters JSON
     filters_file = SCRIPT_DIR / "00_config/publish.filters.json"
     if filters_file.exists() and filters_file.is_file():
         try:
@@ -1788,9 +1683,6 @@ def main() -> None:
         except Exception as e:
             print(f"Error loading publish filters JSON: {e}")
 
-    # Load bookmarks config to resolve path
-
-    # Load services registry JSON
     services = []
     services_file = Path(args.services_json) if args.services_json else (SCRIPT_DIR / "00_config/services.registry.json")
     if services_file.exists() and services_file.is_file():
@@ -1802,17 +1694,15 @@ def main() -> None:
 
     if not services:
         services = [
-            {"id": "qispark_docs", "title": "QiSpark Docs", "description": "Static documentation and blueprints.", "url": "docs/index.html", "icon": "book-open", "color": "#38bdf8", "category": "Primary", "surface": ["public"], "status": "active"},
+            {"id": "qispark_docs", "title": "QiSpark Docs", "description": "Static documentation, specifications and system blueprints.", "url": "docs/index.html", "icon": "book-open", "color": "#38bdf8", "category": "Primary", "surface": ["public"], "status": "active"},
             {"id": "qilabs_tree", "title": "QiLabs Tree", "description": "Sanitized map of public workspace systems and documentation.", "url": "tree.html", "icon": "folder-tree", "color": "#14b8a6", "category": "Primary", "surface": ["public"], "status": "active"},
             {"id": "qisaysit", "title": "QiSaysIt", "description": "Public writing, posts and publishing surface.", "url": "https://qsaysit.com", "icon": "pencil-line", "color": "#10b981", "category": "Publishing", "surface": ["public"], "status": "active"},
             {"id": "qially", "title": "QiAlly", "description": "Primary QiAlly public domain hub.", "url": "https://qially.com", "icon": "globe", "color": "#3b82f6", "category": "Publishing", "surface": ["public"], "status": "active"}
         ]
 
-    # 1. Path guardrails + clean output
     ensure_safe_build_paths(source_dir, dist_dir)
     safe_clean_dist(dist_dir)
 
-    # 2. Basic static build markers
     write_text(dist_dir / ".nojekyll", "")
     write_text(
         dist_dir / "build_manifest.json",
@@ -1824,54 +1714,59 @@ def main() -> None:
                 "tree_root": str(tree_root),
                 "source_read_only_mode": True,
                 "allow_active": allow_active,
+                "strict_publish": strict_publish,
                 "site_title": site_title
             },
             indent=2,
         ),
     )
 
-    # 4. Process Markdown documents
-    docs, stats = convert_md_files(source_dir, dist_dir, allow_active)
+    # Process Markdown documents
+    docs, stats = convert_md_files(source_dir, dist_dir, allow_active=allow_active, strict_publish=strict_publish)
     print(f"Markdown files scanned: {stats['scanned']}")
     print(f"Published docs compiled: {stats['compiled']}")
     print(f"Skipped: {stats['skipped']}")
-    print(f"- status not publishable: {stats['status_not_publishable']}")
-    print(f"- visibility private/internal: {stats['visibility_restricted']}")
-    print(f"- sensitivity restricted: {stats['sensitivity_restricted']}")
-    print(f"- classification restricted: {stats['classification_restricted']}")
-    print(f"- explicit flags restricted: {stats['explicit_flags_restricted']}")
-    print(f"- read errors: {stats['read_errors']}")
 
-    # 5. Generate individual docs pages
-    for doc in docs:
+    docs_root_url = base_path + "docs/index.html"
+
+    # Sort docs by title/folder for prev/next
+    docs.sort(key=lambda d: (d.get("folder", ""), d.get("nav_order", 999), d.get("nav_title", "")))
+
+    # Generate individual docs pages
+    for idx, doc in enumerate(docs):
         doc_sidebar = build_sidebar(docs, doc["rel_html"], base_path=base_path)
         home_path = base_path + "index.html"
-        docs_path = base_path + "docs/index.html"
         tree_path = base_path + "tree.html"
 
-        page_html = make_header(doc["title"], home_path, docs_path, tree_path, site_title=site_title)
-        page_html += render_docs_layout(doc_sidebar, doc["html_body"], doc["frontmatter"])
+        prev_doc = docs[idx - 1] if idx > 0 else None
+        next_doc = docs[idx + 1] if idx < len(docs) - 1 else None
+
+        page_html = make_header(doc["title"], home_path, docs_root_url, tree_path, site_title=site_title)
+        page_html += render_docs_layout(
+            sidebar_html=doc_sidebar,
+            content_html=doc["html_body"],
+            fm=doc["frontmatter"],
+            rel_html_path=doc["rel_html"],
+            prev_doc=prev_doc,
+            next_doc=next_doc,
+            base_path=base_path
+        )
         page_html += HTML_FOOTER
 
         write_text(doc["out_path"], page_html)
 
-    # 6. Generate docs index page
-    if docs:
-        docs_idx_path = dist_dir / "docs" / "index.html"
-        docs_idx_sidebar = build_sidebar(docs, "docs/index.html", base_path=base_path)
-        welcome_html = """
-        <h1>Welcome to QiSpark Documentation</h1>
-        <p>Select a document from the left sidebar to begin reading.</p>
-        """
-        docs_index = make_header("QiSpark Documentation Index", base_path + "index.html", base_path + "docs/index.html", base_path + "tree.html", site_title=site_title)
-        docs_index += render_docs_layout(docs_idx_sidebar, welcome_html, {})
-        docs_index += HTML_FOOTER
-        write_text(docs_idx_path, docs_index)
+    # Generate docs index page
+    docs_idx_path = dist_dir / "docs" / "index.html"
+    docs_idx_sidebar = build_sidebar(docs, "docs/index.html", base_path=base_path)
+    docs_index = make_header("QiSpark Documentation Portal", base_path + "index.html", docs_root_url, base_path + "tree.html", site_title=site_title)
+    docs_index += render_docs_index(docs, docs_idx_sidebar, base_path=base_path, site_title=site_title)
+    docs_index += HTML_FOOTER
+    write_text(docs_idx_path, docs_index)
 
-    # 7. Generate QiLabs tree page
+    # Generate QiLabs tree page
     if not args.no_tree:
         tree_manifest_file = SCRIPT_DIR / "00_config/tree.manifest.json"
-        tree_page = make_header("QiLabs Tree", base_path + "index.html", base_path + "docs/index.html" if docs else "#", base_path + "tree.html", site_title=site_title)
+        tree_page = make_header("QiLabs Tree", base_path + "index.html", docs_root_url, base_path + "tree.html", site_title=site_title)
         tree_page += render_tree_page(
             manifest_path=tree_manifest_file,
             docs=docs,
@@ -1881,10 +1776,9 @@ def main() -> None:
         write_text(dist_dir / "tree.html", tree_page)
         print(f"Generated QiLabs tree: {dist_dir / 'tree.html'}")
 
-    # 8. Generate homepage
-    docs_path_hp = base_path + "docs/index.html" if docs else "#"
-    dashboard_html = make_header(site_title, base_path + "index.html", docs_path_hp, base_path + "tree.html", site_title=site_title)
-    dashboard_html += render_landing(services, base_path + "docs" if docs else "#", base_path + "tree.html")
+    # Generate homepage
+    dashboard_html = make_header(site_title, base_path + "index.html", docs_root_url, base_path + "tree.html", site_title=site_title)
+    dashboard_html += render_landing(services, docs_root_url, base_path + "tree.html")
     dashboard_html += HTML_FOOTER
     write_text(dist_dir / "index.html", dashboard_html)
 
@@ -1892,9 +1786,8 @@ def main() -> None:
     print("=" * 72)
     print("Static Site Build Complete!")
     print(f"Homepage: {dist_dir / 'index.html'}")
+    print(f"Docs:     {dist_dir / 'docs' / 'index.html'}")
     print(f"Tree:     {dist_dir / 'tree.html'}")
-    if docs:
-        print(f"Docs:     {dist_dir / 'docs' / 'index.html'}")
     print("=" * 72)
 
 
