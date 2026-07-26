@@ -56,6 +56,7 @@ TREE_SKIP_DIRS = {
     ".vercel",
     ".netlify",
     "30_QiDrive",
+    "10_daily",
 }
 TREE_SKIP_FILE_NAMES = {
     ".env",
@@ -688,7 +689,6 @@ def render_docs_layout(
     next_doc: dict[str, Any] | None = None,
     base_path: str = "/"
 ) -> str:
-    # Build Breadcrumbs
     parts = rel_html_path.replace("\\", "/").split("/")
     if parts and parts[0] == "docs":
         parts = parts[1:]
@@ -702,7 +702,6 @@ def render_docs_layout(
     
     breadcrumbs_html = f'<div class="doc-breadcrumbs">{" / ".join(crumb_items)}</div>'
 
-    # Build Metadata Header
     metadata_html = ""
     meta_blocks = ""
     
@@ -714,14 +713,12 @@ def render_docs_layout(
         dt_val = str(fm.get("updated_at") or fm.get("date"))
         meta_blocks += f'<span class="meta-pill"><i data-lucide="calendar"></i> {html.escape(dt_val)}</span>'
 
-    # Estimate reading time
     read_time = estimate_reading_time(content_html)
     meta_blocks += f'<span class="meta-pill time-pill"><i data-lucide="clock"></i> {read_time}</span>'
 
     if meta_blocks:
         metadata_html = f'<div class="doc-meta-bar">{meta_blocks}</div>'
 
-    # Pagination controls
     pagination_html = ""
     prev_html = ""
     next_html = ""
@@ -1027,12 +1024,10 @@ def render_docs_layout(
 
 
 # ---------------------------------------------------------------------------
-# Sidebar Tree Builder
+# Sidebar Tree Builder (O(N) Optimized)
 # ---------------------------------------------------------------------------
-def build_sidebar(docs_list: list[dict[str, Any]], current_rel_path: str | None = None, base_path: str = "/") -> str:
+def build_sidebar_tree(docs_list: list[dict[str, Any]]) -> dict[str, Any]:
     visible_docs = [doc for doc in docs_list if not doc.get("nav_hidden", False)]
-    link_prefix = base_path
-
     root_node: dict[str, Any] = {"files": [], "dirs": {}}
 
     for doc in visible_docs:
@@ -1054,59 +1049,60 @@ def build_sidebar(docs_list: list[dict[str, Any]], current_rel_path: str | None 
 
         current_node["files"].append(doc)
 
-    def render_node(node: dict[str, Any], current_path: str | None, prefix: str) -> str:
-        html_out = ""
+    return root_node
 
-        for dir_key in sorted(node["dirs"].keys()):
-            child = node["dirs"][dir_key]
-            display_name = dir_key
-            if display_name.isdigit() or (len(display_name) > 2 and display_name[:2].isdigit()):
-                display_name = re.sub(r"^\d+_", "", display_name)
-            display_name = display_name.replace("_", " ").title()
 
-            child_html = render_node(child, current_path, prefix)
-            if not child_html.strip():
-                continue
+def render_sidebar_tree(node: dict[str, Any], current_path: str | None = None, base_path: str = "/") -> str:
+    html_out = ""
 
-            is_open = False
-            if current_path:
-                norm_path = current_path.replace("\\", "/")
-                path_parts = norm_path.split("/")[:-1]
-                if dir_key in path_parts:
-                    is_open = True
+    for dir_key in sorted(node["dirs"].keys()):
+        child = node["dirs"][dir_key]
+        display_name = dir_key
+        if display_name.isdigit() or (len(display_name) > 2 and display_name[:2].isdigit()):
+            display_name = re.sub(r"^\d+_", "", display_name)
+        display_name = display_name.replace("_", " ").title()
 
-            open_attr = " open" if is_open else ""
+        child_html = render_sidebar_tree(child, current_path, base_path)
+        if not child_html.strip():
+            continue
 
-            html_out += f"""
-            <div class="tree-folder">
-                <details{open_attr}>
-                    <summary class="folder-header">
-                        <i data-lucide="folder" style="width: 14px; height: 14px; color: var(--text-muted)"></i>
-                        {html.escape(display_name)}
-                    </summary>
-                    <div class="folder-content">
-                        {child_html}
-                    </div>
-                </details>
-            </div>
-            """
+        is_open = False
+        if current_path:
+            norm_path = current_path.replace("\\", "/")
+            path_parts = norm_path.split("/")[:-1]
+            if dir_key in path_parts:
+                is_open = True
 
-        sorted_files = sorted(
-            node["files"],
-            key=lambda x: (x.get("nav_order", 999), str(x.get("nav_title") or "").lower())
-        )
-        for f in sorted_files:
-            is_active = current_path == f["rel_html"]
-            active_class = " active" if is_active else ""
-            html_out += f"""
-            <a href="{html.escape(prefix + f['rel_html'], quote=True)}" class="tree-item{active_class}" title="{html.escape(f['nav_title'], quote=True)}">
-                {html.escape(f['nav_title'])}
-            </a>
-            """
+        open_attr = " open" if is_open else ""
 
-        return html_out
+        html_out += f"""
+        <div class="tree-folder">
+            <details{open_attr}>
+                <summary class="folder-header">
+                    <i data-lucide="folder" style="width: 14px; height: 14px; color: var(--text-muted)"></i>
+                    {html.escape(display_name)}
+                </summary>
+                <div class="folder-content">
+                    {child_html}
+                </div>
+            </details>
+        </div>
+        """
 
-    return render_node(root_node, current_rel_path, link_prefix)
+    sorted_files = sorted(
+        node["files"],
+        key=lambda x: (x.get("nav_order", 999), str(x.get("nav_title") or "").lower())
+    )
+    for f in sorted_files:
+        is_active = current_path == f["rel_html"]
+        active_class = " active" if is_active else ""
+        html_out += f"""
+        <a href="{html.escape(base_path + f['rel_html'], quote=True)}" class="tree-item{active_class}" title="{html.escape(f['nav_title'], quote=True)}">
+            {html.escape(f['nav_title'])}
+        </a>
+        """
+
+    return html_out
 
 
 # ---------------------------------------------------------------------------
@@ -1732,9 +1728,12 @@ def main() -> None:
     # Sort docs by title/folder for prev/next
     docs.sort(key=lambda d: (d.get("folder", ""), d.get("nav_order", 999), d.get("nav_title", "")))
 
+    # Pre-build sidebar tree ONCE for O(N) performance
+    sidebar_tree = build_sidebar_tree(docs)
+
     # Generate individual docs pages
     for idx, doc in enumerate(docs):
-        doc_sidebar = build_sidebar(docs, doc["rel_html"], base_path=base_path)
+        doc_sidebar = render_sidebar_tree(sidebar_tree, doc["rel_html"], base_path=base_path)
         home_path = base_path + "index.html"
         tree_path = base_path + "tree.html"
 
@@ -1757,7 +1756,7 @@ def main() -> None:
 
     # Generate docs index page
     docs_idx_path = dist_dir / "docs" / "index.html"
-    docs_idx_sidebar = build_sidebar(docs, "docs/index.html", base_path=base_path)
+    docs_idx_sidebar = render_sidebar_tree(sidebar_tree, "docs/index.html", base_path=base_path)
     docs_index = make_header("QiSpark Documentation Portal", base_path + "index.html", docs_root_url, base_path + "tree.html", site_title=site_title)
     docs_index += render_docs_index(docs, docs_idx_sidebar, base_path=base_path, site_title=site_title)
     docs_index += HTML_FOOTER
